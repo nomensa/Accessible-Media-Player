@@ -1,34 +1,25 @@
-/*-----------------------------------------------------------------*
-    Nomensa Media Player (Provides an Accessible HTML wrapper around 
-    		popular online media players) - http://player.nomensa.com
-    
-	Nomensa Media player plugin.  Works with youtube by default.  
-	For all other players an extra config is required.
- 
-	@dependencies: 
-		- jquery.js (Versions 1.3.2 - current)
-		- jquery.ui.js (Versions 1.7.3/1.8.13 currently supported)
- 
-	@version 2.0
-	
-    Copyright (C) 2011  Nomensa Ltd
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-	
- 
-*-----------------------------------------------------------------*/
+/**
+*    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.  
+*    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar 
+*    for interacting with a media player of your choice. We currently provide support for YouTube (default),
+*    Vimeo and JWPlayer although it should be possible to integrate the player with almost any media player on
+*    the web (provided a JavaScript api for the player in question is available).
+*    
+*    Copyright (C) 2012  Nomensa Ltd
+*
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/
 
 // Bind function to resize event of the window/viewport
 $(document).ready(function() {
@@ -50,15 +41,15 @@ $(document).ready(function() {
 *---------------------------------------------------------*/
 var PlayerManager = function(){
 	//This is where we will store all of our player instances
-	this.players = {};	
+	var players = {};	
 	/*
 	* Use this method for retrieving a player from the player list
 	* @param playerID {string}: The id of the player object that we want to retrieve
 	* @return {object}: Instance of a player if one with identical playerid exists, otherwise null
 	*---------------------------------------------------------*/
 	this.getPlayer = function(playerID){
-		if(this.players[playerID] != undefined){
-			return this.players[playerID];
+		if(players[playerID] != undefined){
+			return players[playerID];
 		}
 		return null;
 	};
@@ -68,8 +59,8 @@ var PlayerManager = function(){
 	* @return {bool}: True if the player was added to the list, false if it already exists within the list
 	*---------------------------------------------------------*/
 	this.addPlayer = function(player){
-		if(this.players[player.config.id] == undefined){
-			this.players[player.config.id] = player;
+		if(players[player.config.id] == undefined){
+			players[player.config.id] = player;
 			return true;
 		}
 		return false;
@@ -79,8 +70,8 @@ var PlayerManager = function(){
 	* @param playerID {string}: The id of the player object that we want to delete
 	*---------------------------------------------------------*/
 	this.removePlayer = function(playerID){
-		if(this.players[playerID] != undefined){
-			delete this.players[playerID];
+		if(players[playerID] != undefined){
+			delete players[playerID];
 		}
 	};
 };
