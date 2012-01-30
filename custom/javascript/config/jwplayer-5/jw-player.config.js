@@ -1,27 +1,26 @@
-/*
-* Config file for using jwplayer with the nomensa mediaplayer
-* In order to override the required player methods this needs to 
-* be passed into the mediaplayer constructor as the second argument
+/**
+*    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.  
+*    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar 
+*    for interacting with a media player of your choice. We currently provide support for YouTube (default),
+*    Vimeo and JWPlayer although it should be possible to integrate the player with almost any media player on
+*    the web (provided a JavaScript api for the player in question is available).
+*    
+*    Copyright (C) 2012  Nomensa Ltd
 *
-* @example: $('#myplayer').player({},jwconfig);
-* 
-* Note that the first argument in this instance is empty.  This first argument 
-* maps to the config so any basic properties that need to be overridden can be 
-* done so via this object
-* 
-* @example: $('#myplayer').player({id:'jwplayer',buttons:{toggle:false}},jwconfig);
-* 
-* This example will use the jwconfig, will set the basic id to 'jwplayer' and will 
-* remove the play/pause toggle.  Both play and pause buttons will be provided instead 
-* of just the one button for toggling between play and pause
-* 
-* @dependencies: 
-*     - jwplayer version 5.x - Tested with version 5.6
-*     - jwplayer.js. (This file is needed to create the player manager instance.
-*       it should be distributed with the jwplayer package)
-*     - jquery.js (Versions 1.3.2 - current)
-*     - jquery.ui.js (Versions 1.7.3/1.8.13 currently supported)
-*-------------------------------------------------------------------------------------*/
+*    This program is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**/
+
 var jwconfig = {	
 	/*
 	* Init method for our player instance.  This is where we can bind 
