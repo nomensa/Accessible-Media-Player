@@ -15,6 +15,11 @@ Configuration
 For information on implementing the Accessible Media Player please refer to the Accessible-media-player_2.0_documentation.pdf file in the root of this git repository.
 In addition to this a number of example configurations have been provided inside the [example](https://github.com/nomensa/Accessible-Media-Player/tree/master/example) directory within this repository.
 
+Notes
+--------------------------------------
+There is currently a bug in the JW Player related to loading video and audio files using relative paths.
+For more information about this issue please refer to http://www.longtailvideo.com/support/forums/jw-player/setup-issues-and-embedding/10303/flv-relative-path-problem
+
 Author
 --------------------------------------
 This project was created and is maintained by the friendly folks at [Nomensa](http://www.nomensa.com) for your benefit.
