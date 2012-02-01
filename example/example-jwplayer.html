@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	    <meta charset="utf-8" />
+	    
+	    <title>Accessible Media Player Example - JW Player</title>
+	
+	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
+	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
+	
+		<!-- Include googles JSAPI and load jQuery from there -->
+	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.0");
+	        google.load("jqueryui", "1.8.13");
+	    </script>
+	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/core/jwplayer.js"></script>
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/jw-player.config.js"></script>
+		<!-- Include the minified version of the accessible media player script -->
+	    <script type="text/javascript" src="../core/javascript/jquery.player.js"></script>
+	    <script type="text/javascript" src="../custom/javascript/jquery.loader.js"></script>
+	</head>
+	<body>
+	    <div>
+	        <h1>Accessible Media Player</h1>
+			<h2>Examples</h2>
+	        <h3>JW Player - MP4 File</h3>
+	        <!--
+	        	There is a bug in the JW Player that causes issues with relative paths to 
+	        	audio and video files.  Video files expect paths to be declared relative
+	        	to the jw player.swf.  Audio files expect paths to be declared relative to
+	        	the document (HTML file).  One work around is to provide fully qualified urls
+	        	in a production environment.  more info on this bug can be found at the url below:
+	        	http://www.longtailvideo.com/support/forums/jw-player/setup-issues-and-embedding/10303/flv-relative-path-problem
+	       	-->
+	        <p>
+	        	<a href="../../../../../example/video/hidden-elements.mp4">Screen readers and hidden elements</a>
+	        	<a class="captions" href="captions/captions-hidden-elements.xml" style="display:none;">Captions</a>
+	        </p>
+	    	
+	        <h3>JW Player - MP3 File</h3>
+	        <p>
+	        	<a href="../example/audio/Jaws_HTML_Tables.mp3">Tester MP3 file</a>
+	        </p>
+	    </div>
+	</body>
+</html>

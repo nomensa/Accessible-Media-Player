@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	    <meta charset="utf-8" />
+	    
+	    <title>Accessible Media Player Example - YouTube</title>
+	
+	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
+	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
+	
+		<!-- Include googles JSAPI and load jQuery from there -->
+	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.0");
+	        google.load("jqueryui", "1.8.13");
+	    </script>
+	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
+	    <!-- Include the minified version of the accessible media player script -->
+	    <script type="text/javascript" src="../core/javascript/jquery.player.min.js"></script>
+	    <script type="text/javascript" src="../custom/javascript/jquery.loader.js"></script>
+	</head>
+	<body>
+	    <div>
+	        <h1>Accessible Media Player</h1>
+			<div><!-- jquery.loader.js method one -->
+				<h2>Examples</h2>
+		        <h3>YouTube Player with captions</h3>
+		        <p><a href="http://www.youtube.com/watch?v=kXiGXcq4pqY">Order of content by Emily Coward</a><a class="captions" href="./example/captions/captions-order-of-content.xml" style="display:none;">Captions</a></p>
+		        
+				<h3>YouTube Player without captions</h3>
+				<p><a href="http://www.youtube.com/watch?v=IhWMou12_Vk">Aria Document Landmark Roles</a></p>
+		    </div>
+	    </div><!-- /contentLeft -->
+	</body>
+</html>
