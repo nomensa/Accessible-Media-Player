@@ -5,19 +5,22 @@
 	    <meta charset="utf-8" />
 	    
 	    <title>Accessible Media Player Example - YouTube</title>
-	
+		
+		<!-- Include styles for media player -->
 	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
 	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
 	
-		<!-- Include googles JSAPI and load jQuery from there -->
+		<!-- Include google's JSAPI and load jQuery from there -->
 	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
 	        google.load("jquery", "1.6.0");
 	        google.load("jqueryui", "1.8.13");
 	    </script>
+	    
 	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
-	    <!-- Include the minified version of the accessible media player script -->
+	    <!-- Include the accessible media player script -->
 	    <script type="text/javascript" src="../core/javascript/jquery.player.min.js"></script>
+	    <!-- Custom script for generating the youtube player -->
 	    <script type="text/javascript">
 	    $(document).ready(function(){
 	    	// Find all links to videos on youtube
@@ -42,6 +45,7 @@
 		    });
     	});
 	    </script>
+	    
 	</head>
 	<body>
 	    <div>
