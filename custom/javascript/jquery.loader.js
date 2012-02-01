@@ -33,6 +33,7 @@ $(document).ready(function() {
 	 * (simple but potentially less flexible and extra load on the browser)
 	 */
 	var $yt_links = $("a[href*='http://www.youtube.com/watch']");
+    var $vimeo_links = $("a[href*='http://vimeo.com/']");
     var $media_links = $("a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
     var $audio_links = $("a[href$='mp3']");
     
@@ -54,7 +55,28 @@ $(document).ready(function() {
 			captions:captionsf
         });
     });
-    
+
+	// Iterate through the links to vimeo 
+	// instantiating a player instance for each
+	$.each($vimeo_links, function(i) {
+    	var $holder = $('<span />');
+        $(this).parent().replaceWith($holder);
+        // Find the captions file if it exists
+        var $mycaptions = $(this).siblings('.captions');
+        // Work out if we have captions or not
+        var captionsf = $($mycaptions).length > 0 ? $($mycaptions).attr('href') : null;
+        // Ensure that we extract the last part of the vimeo link (the video id)
+        // and pass it to the player() method
+        var link = $(this).attr('href').split("/")[3];
+        // Initialise the player
+        $holder.player({
+            id:'vimeo'+i,
+            url: 'http://vimeo.com/moogaloop.swf?clip_id=',
+            media:link,
+			captions:captionsf
+        }, vimeoconfig);
+    });
+
     // Create players for our audio links
     $.each($audio_links, function(i) {
         var $holder = $('<span />');
