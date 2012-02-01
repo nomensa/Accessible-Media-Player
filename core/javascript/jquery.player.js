@@ -237,7 +237,7 @@ var html5_methods = {
 		* tags.  This removes them from the tabbing order and thus removes the trap
 		* @NOTE: This is also being used to detect firefox 5 now as flash is also broken for this release
 		*----------------------------------------------*/
-		var isFirefoxFour = function(){
+		var isFirefox = function(){
 			if($.browser.mozilla){
 				return ( parseInt($.browser.version.substring(0, 1), 10) >= 2) ? true : false;
 			}
@@ -350,7 +350,7 @@ var html5_methods = {
 							$container.attr('id'), $self.config.flashWidth, 
 							$self.config.flashHeight, "9.0.115", null, flashvars, params, atts, $self.config.swfCallback);
 					// Dirty hack to remove element from tab index for versions of firefox that trap focus in flash
-					if(isFirefoxFour()){
+					if(isFirefox()){
 							$self.$html.find('object').attr("tabindex", '-1');
 						}
 				}, 0);
