@@ -239,7 +239,7 @@ var html5_methods = {
 		*----------------------------------------------*/
 		var isFirefox = function(){
 			if($.browser.mozilla){
-				return ( parseInt($.browser.version.substring(0, 1), 10) >= 2) ? true : false;
+				return ( parseInt($.browser.version, 10) >= 2) ? true : false;
 			}
 			return false;
 		};
