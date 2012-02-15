@@ -399,6 +399,9 @@ var html5_methods = {
 								})
 							.blur(function() {
 									$(this).removeClass("ui-state-focus"); 
+								})
+							.click(function(e){
+									e.preventDefault();
 								});
 				
 				return $btn;
