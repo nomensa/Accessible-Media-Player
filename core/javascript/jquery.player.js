@@ -59,11 +59,8 @@ var PlayerManager = function(){
 	* @return {bool}: True if the player was added to the list, false if it already exists within the list
 	*---------------------------------------------------------*/
 	this.addPlayer = function(player){
-		if(players[player.config.id] == undefined){
-			players[player.config.id] = player;
-			return true;
-		}
-		return false;
+		players[player.config.id] = player;
+		return true;
 	};
 	/*
 	* Use this method for removing a player from the player list
@@ -71,6 +68,7 @@ var PlayerManager = function(){
 	*---------------------------------------------------------*/
 	this.removePlayer = function(playerID){
 		if(players[playerID] != undefined){
+			players[playerID].destroy();
 			delete players[playerID];
 		}
 	};
@@ -552,9 +550,11 @@ var html5_methods = {
 			*---------------------------------------------------------*/
 			setSliderTimeout : function(){
 				var self = this;
-				self.sliderInterval = setInterval(function() { 
-					self.updateSlider();
-				}, self.config.sliderTimeout);
+				if(self.sliderInterval == undefined){
+					self.sliderInterval = setInterval(function() { 
+						self.updateSlider();
+					}, self.config.sliderTimeout);
+				}
 			},
 			/*
 			* Method for clearing the timeout function for updating the 
@@ -798,6 +798,28 @@ var html5_methods = {
 						this.insertCaption(caption);
 					}
 				}
+			},
+			/*
+			* Method for destroying the 3rd party 
+			* media player instance.  Not all providers
+			* apis allow us to do this. So provide overridable
+			* method stub.
+			*/
+			destroyPlayerInstance: function(){
+				// Youtube does not allow us to destroy 
+				// the player instance right now.  Just return false
+				return false;
+			},
+			/*
+			* Method for destroying the player
+			* Delegates to 'destroyPlayerInstance'
+			* for destroying the 3rd party player instance
+			*/
+			destroy: function(){
+				this.clearSliderTimeout();
+				this.clearCaptionTimeout();
+				this.destroyPlayerInstance();
+				this.$html.remove();
 			},
 			/*
 			* Set the timeout for updating captions.  Set to half a second since
