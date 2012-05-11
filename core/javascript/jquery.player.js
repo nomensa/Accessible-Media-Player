@@ -105,14 +105,8 @@ var html5_methods = {
 		getDuration : function(){return this.player.duration;},
 		getCurrentTime : function(){return this.player.currentTime;},
 		getBytesLoaded : function(){return this.player.buffered.end(0);},
-		getBytesTotal : function(){
-			if(this.player.seekable != undefined){	
-				return this.player.seekable.end();
-			}else{
-				// Some browsers (Firefox 4) will not always have the seekable property
-				// If not, just return the duration 
+		getBytesTotal : function(){ 
 				return this.player.duration;
-			}
 		},
 		seek : function(time){this.player.currentTime = time;},
 		cue : function(){return;}	// No queueing required for html5 video, just return
