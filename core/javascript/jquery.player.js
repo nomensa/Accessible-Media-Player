@@ -21,18 +21,20 @@
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-// Bind function to resize event of the window/viewport
-$(document).ready(function() {
-	$(window).resize(function(){
-        $('.player-container').each(function() {
-            if($(this).width()>580) {
-				$(this).addClass('player-wide');
-			} else {
-				$(this).removeClass('player-wide');
-			}    
-	    });
+(function ($) {
+	// Bind function to resize event of the window/viewport
+	$(document).ready(function() {
+		$(window).resize(function(){
+	        $('.player-container').each(function() {
+	            if($(this).width()>580) {
+					$(this).addClass('player-wide');
+				} else {
+					$(this).removeClass('player-wide');
+				}    
+		    });
+		});
 	});
-});
+})(jQuery);
 
 /*
 * Global object used for managing all the players on our page
