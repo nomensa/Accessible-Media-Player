@@ -22,7 +22,7 @@
 **/
 
 // Bind function to resize event of the window/viewport
-$(document).ready(function() {
+jQuery(function($) {
 	$(window).resize(function(){
         $('.player-container').each(function() {
             if($(this).width()>580) {
