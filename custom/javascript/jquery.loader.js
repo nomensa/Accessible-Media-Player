@@ -22,7 +22,7 @@
 **/
 
 
-$(document).ready(function() {
+jQuery(function($) {
 /*
  * There are many ways in which you can load the Accessible Media Player. The best method 
  * will vary depending on any implementation and/or CMS restrictions you might have.
