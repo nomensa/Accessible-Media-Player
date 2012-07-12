@@ -63,6 +63,11 @@ var jwconfig = {
 			});
 		}
 	},
+	destroyPlayerInstance: function() {
+		if(this.player != undefined){
+			this.player.remove();
+		}
+	},
 	getURL : function(){return this.config.url;},
 	play : function(){this.player.play();this.setSliderTimeout();if(this.config.captionsOn && this.captions){this.setCaptionTimeout();}},
 	pause : function(){this.player.pause();this.clearSliderTimeout();if(this.config.captionsOn && this.captions){this.clearCaptionTimeout();}},
