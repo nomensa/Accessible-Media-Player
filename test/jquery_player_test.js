@@ -13,7 +13,7 @@ describe("jquery.player tests (integration)", function () {
   });
 
   it("should have a #wrapper div to hold our HTML fixtures", function () {
-    expect(document.querySelectorAll("#wrapper").length).toEqual(1);
+    expect(document.querySelectorAll("#wrapper").length).toBe(1);
   });
 
   describe("Youtube videos", function () {
@@ -35,7 +35,7 @@ describe("jquery.player tests (integration)", function () {
     });
 
     it("should have a single youtube link on the page", function () {
-      expect(document.querySelectorAll("#wrapper a[href*='http://www.youtube.com/watch']").length).toEqual(1);
+      expect(document.querySelectorAll("#wrapper a[href*='http://www.youtube.com/watch']").length).toBe(1);
     });
 
     describe("create a jquery player", function () {
@@ -59,7 +59,7 @@ describe("jquery.player tests (integration)", function () {
       });
 
       it("should have a span holding the video link", function () {
-        expect(document.querySelectorAll("#wrapper > span").length).toEqual(1);
+        expect(document.querySelectorAll("#wrapper > span").length).toBe(1);
       });
 
       it("should call the YoutubePlayer constructor", function () {
