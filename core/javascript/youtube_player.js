@@ -1,4 +1,4 @@
-var YoutubePlayer = function (config) {
+window.YoutubePlayer = function (config) {
 
     return {
         config: config,
