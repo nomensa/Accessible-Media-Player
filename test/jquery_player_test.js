@@ -127,7 +127,7 @@ describe("jquery.player tests (integration)", function () {
         expect(window.YoutubePlayer).toHaveBeenCalled();
       });
 
-      describe("call the YoutubePlayer constructor", function () {
+      describe("Call the YoutubePlayer constructor", function () {
         it("should recieve a single argument", function () {
           expect(window.YoutubePlayer.calls[0].args[0]).toBeDefined();
         });
