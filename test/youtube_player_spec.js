@@ -1,7 +1,47 @@
 describe("Youtube Player", function() {
   var cleanUpYoutubeDOM = function () {
-    var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0];
-    document.getElementsByTagName('head')[0].removeChild(apiScript);
+    var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0],
+        wrapper = document.getElementById('wrapper');
+
+    if (apiScript) {
+      document.getElementsByTagName('head')[0].removeChild(apiScript);
+    }
+    if (wrapper) {
+      wrapper.parentNode.removeChild(wrapper);
+    }
+  },
+  defaultConfig = { 
+    id: 'wrapper',
+    url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
+    media: '8LiQ-bLJaM4',
+    repeat: false,
+    captions: null,
+    captionsOn: true,
+    flashWidth: '100%',
+    flashHeight: '300px',
+    playerStyles: {
+        'height': '100%',
+        'width': '100%'
+    },
+    sliderTimeout: 350,
+    flashContainer: 'span',
+    playerContainer: 'span',
+    image: '',
+    playerSkip: 10,
+    volumeStep: 10,
+    buttons: {
+        forward: true,
+        rewind: true,
+        toggle: true
+    },
+    logoURL: 'http://www.nomensa.com?ref=logo',
+    useHtml5: true,
+    swfCallback: null
+  },
+  createWrapperDiv = function () {
+    wrapper = document.createElement('div');
+    wrapper.id = "wrapper";
+    document.body.appendChild(wrapper);
   };
 
   describe("Match public mediaplayer public interface", function () {
@@ -54,8 +94,18 @@ describe("Youtube Player", function() {
   it("should call the YoutubePlayer.onready method", function () {
     var youtube;
 
-    youtube = new YoutubePlayer({});
-    spyOn(youtube, 'onready');
-    expect(youtube.onready).toHaveBeenCalled();
+    createWrapperDiv();
+    spyOn(YoutubePlayer.prototype, "onready");
+    youtube = new YoutubePlayer(defaultConfig);
+
+    waitsFor(function(){
+      return YoutubePlayer.prototype.onready.callCount > 0;
+    }, "onready function called", 10e5);
+    
+    runs(function () {
+      expect(YoutubePlayer.prototype.onready).toHaveBeenCalled();
+
+      cleanUpYoutubeDOM();
+    });
   });
 });

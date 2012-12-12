@@ -8,10 +8,10 @@ window.YoutubePlayer = function (config) {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   window.onYouTubeIframeAPIReady = function () {
-    player = new YT.Player('wrapper', {
-      height: '100px',
-      width: '400px',
-      videoId: '8LiQ-bLJaM4',
+    player = new YT.Player(config.id, {
+      height: config.playerStyles.height,
+      width: config.playerStyles.width,
+      videoId: config.media,
       events: {
         'onReady': inst.onready
       }
@@ -20,7 +20,6 @@ window.YoutubePlayer = function (config) {
 };
 window.YoutubePlayer.prototype = {
     onready: function (event) {
-      console.log(event);
     },
     is_html5: false,
     play: function () {},
