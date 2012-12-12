@@ -8,7 +8,7 @@ window.YoutubePlayer = function (config) {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
   window.onYouTubeIframeAPIReady = function () {
-    player = new YT.Player(config.id, {
+    inst.player = new YT.Player(config.id, {
       height: config.playerStyles.height,
       width: config.playerStyles.width,
       videoId: config.media,

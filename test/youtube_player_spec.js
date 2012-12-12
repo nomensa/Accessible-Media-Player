@@ -9,6 +9,7 @@ describe("Youtube Player", function() {
     if (wrapper) {
       wrapper.parentNode.removeChild(wrapper);
     }
+    window.YT = null;
   },
   defaultConfig = { 
     id: 'wrapper',
@@ -100,7 +101,7 @@ describe("Youtube Player", function() {
 
     waitsFor(function(){
       return YoutubePlayer.prototype.onready.callCount > 0;
-    }, "onready function called", 10e5);
+    }, "onready function called", 10e3);
     
     runs(function () {
       expect(YoutubePlayer.prototype.onready).toHaveBeenCalled();
