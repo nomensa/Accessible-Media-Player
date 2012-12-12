@@ -13,7 +13,7 @@ describe("PlayerManager", function () {
     expect(manager.getPlayer(123)).toEqual(null);
   });
 
-  describe("getting and setting a player", function () {
+  describe("Getting and setting a player", function () {
     beforeEach(function () {
       examplePlayer = {
         config: {
