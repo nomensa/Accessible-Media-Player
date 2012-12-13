@@ -139,7 +139,7 @@ describe("Youtube Player", function() {
 
       runs(function () {
         expect(YoutubePlayer.prototype.onPlayerReady).toHaveBeenCalled();
-        expect(youtube.getPlayer().getPlayerState()).toBe(state['unstarted']);
+        expect(youtube.getPlayer().getPlayerState()).toBe(state.unstarted);
 
         youtube.play();
 
@@ -148,7 +148,7 @@ describe("Youtube Player", function() {
         }, "the player state has changed after registering the event change", 10e3);
 
         runs(function () {
-          expect(youtube.getPlayer().getPlayerState()).toBe(state['playing']);
+          expect(youtube.getPlayer().getPlayerState()).toBe(state.playing);
           youtube.pause();
           cleanUpYoutubeDOM();
         });
@@ -161,7 +161,7 @@ describe("Youtube Player", function() {
       }, "onPlayerReady function called", 10e3);
 
       runs(function () {
-        expect(youtube.getPlayer().getPlayerState()).toBe(state['unstarted']);
+        expect(youtube.getPlayer().getPlayerState()).toBe(state.unstarted);
         youtube.play();
 
         waitsFor(function () {
@@ -169,15 +169,15 @@ describe("Youtube Player", function() {
         }, "the player state has changed after registering the event change", 10e3);
 
         runs(function () {
-          expect(youtube.getPlayer().getPlayerState()).toBe(state['playing']);
+          expect(youtube.getPlayer().getPlayerState()).toBe(state.playing);
           youtube.pause();
 
           waitsFor(function () {
-            return youtube.getPlayer().getPlayerState() !== state['playing'];
+            return youtube.getPlayer().getPlayerState() !== state.playing;
           }, "the player state has changed away from playing", 10e3);
 
           runs(function () {
-            expect(youtube.getPlayer().getPlayerState()).toBe(state['paused']);
+            expect(youtube.getPlayer().getPlayerState()).toBe(state.paused);
             cleanUpYoutubeDOM();
           });
         });
@@ -195,7 +195,7 @@ describe("Youtube Player", function() {
         youtube.seek(10);
 
         waitsFor(function () {
-          return youtube.getPlayer().getPlayerState() == state['playing'];
+          return youtube.getPlayer().getPlayerState() == state.playing;
         }, "the player starts to play", 10e3);
 
         runs(function () {
