@@ -38,7 +38,7 @@ describe("jquery.player tests (integration)", function () {
       url: videoLink.href
     });
 
-    expect(window.YoutubePlayer).not.toHaveBeenCalled(); 
+    expect(window.YoutubePlayer).not.toHaveBeenCalled();
 
     holder.remove();
     wrapper.appendChild(videoLink);

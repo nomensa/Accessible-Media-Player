@@ -11,7 +11,7 @@ describe("Youtube Player", function() {
     }
     window.YT = null;
   },
-  defaultConfig = { 
+  defaultConfig = {
     id: 'wrapper',
     url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
     media: '8LiQ-bLJaM4',
@@ -102,7 +102,7 @@ describe("Youtube Player", function() {
     waitsFor(function(){
       return YoutubePlayer.prototype.onready.callCount > 0;
     }, "onready function called", 10e3);
-    
+
     runs(function () {
       expect(YoutubePlayer.prototype.onready).toHaveBeenCalled();
 
