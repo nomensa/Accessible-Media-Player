@@ -64,14 +64,18 @@ window.YoutubePlayer.prototype = {
     this.seek(time);
   },
   mute: function () {
-    this.player.mute();
+    if (!this.player.isMuted()) {
+      this.player.mute();
+    } else {
+      this.player.unMute();
+    }
   },
   volup: function () {
-    var currentVolume = inst.player.getVolume();
+    var currentVolume = this.player.getVolume();
     this.player.setVolume(currentVolume >= 100 ? 100 : currentVolume + 1);
   },
   voldwn: function () {
-    var currentVolume = inst.player.getVolume();
+    var currentVolume = this.player.getVolume();
     this.player.setVolume(currentVolume <= 0 ? 0 : currentVolume - 1);
   },
   getDuration: function () {

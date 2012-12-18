@@ -132,6 +132,17 @@ describe("Youtube Player", function() {
       youtube = null;
     });
 
+    it("should return the YT player when getPlayer is called", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        expect(youtube.getPlayer()).toBe(youtube.player);
+        cleanUpYoutubeDOM();
+      });
+    });
+
     it("should change the YT player state to 'playing'", function () {
       waitsFor(function() {
         return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
@@ -184,6 +195,23 @@ describe("Youtube Player", function() {
       });
     });
 
+    it("should return the correct time", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        var time,
+            youtubeAPIObj = youtube.getPlayer();
+
+        spyOn(youtubeAPIObj, "getCurrentTime").andCallThrough();
+        time = youtube.getCurrentTime();
+        expect(youtubeAPIObj.getCurrentTime).toHaveBeenCalled();
+        expect(time).toBe(0);
+        cleanUpYoutubeDOM();
+      });
+    });
+
     it("should seek to the required point in time", function () {
       waitsFor(function() {
         return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
@@ -201,7 +229,103 @@ describe("Youtube Player", function() {
         runs(function () {
           expect(youtube.getCurrentTime()).toBe(10);
           youtube.pause();
+          cleanUpYoutubeDOM();
         });
+      });
+    });
+
+    it("should change the YT player state to 'muted'", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        var youtubeAPIObj = youtube.getPlayer();
+        spyOn(youtubeAPIObj, 'mute').andCallThrough();
+        expect(youtubeAPIObj.mute).not.toHaveBeenCalled();
+
+        youtube.mute();
+        expect(youtubeAPIObj.mute).toHaveBeenCalled();
+        cleanUpYoutubeDOM();
+      });
+    });
+
+    it("should change the YT player state to 'unmuted' when already set to 'mute'", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        var youtubeAPIObj = youtube.getPlayer();
+        spyOn(youtubeAPIObj, 'unMute').andCallThrough();
+        expect(youtubeAPIObj.unMute).not.toHaveBeenCalled();
+
+        youtube.mute();
+        waitsFor(function () {
+          return youtubeAPIObj.isMuted();
+        }, "mute to be called", 10e3);
+
+        runs(function () {
+          youtube.mute();
+          expect(youtubeAPIObj.unMute).toHaveBeenCalled();
+          cleanUpYoutubeDOM();
+        });
+      });
+    });
+
+    it("should move the time by +10 seconds when fast-forwarded", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        spyOn(youtube, 'seek');
+
+        expect(youtube.getCurrentTime()).toBe(0);
+        youtube.ffwd();
+        expect(youtube.seek.mostRecentCall.args[0]).toEqual(10);
+        cleanUpYoutubeDOM();
+      });
+    });
+
+    it("should move the time by -10 seconds when rewound", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        spyOn(youtube, 'seek').andCallThrough();
+        expect(youtube.getCurrentTime()).toBe(0);
+
+        youtube.seek(10);
+
+        waitsFor(function () {
+          return youtube.getPlayer().getPlayerState() == state.playing;
+        }, "the player starts to play", 10e3);
+
+        runs(function () {
+          expect(youtube.getCurrentTime()).toBe(10);
+          youtube.rewd();
+          expect(youtube.seek.mostRecentCall.args[0]).toEqual(0);
+          cleanUpYoutubeDOM();
+        });
+      });
+    });
+
+    it("should move the volume down by the correct amount", function () {
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        var youtubeAPIObj = youtube.getPlayer();
+        spyOn(youtubeAPIObj, "setVolume");
+        expect(youtubeAPIObj.getVolume()).toBe(100);
+
+        youtube.voldwn();
+        expect(youtubeAPIObj.setVolume).toHaveBeenCalled();
+        expect(youtubeAPIObj.setVolume.mostRecentCall.args[0]).toEqual(99);
+        cleanUpYoutubeDOM();
       });
     });
   });
