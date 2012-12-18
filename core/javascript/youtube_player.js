@@ -21,6 +21,12 @@ window.YoutubePlayer = function (config) {
 };
 
 window.YoutubePlayer.prototype = {
+  state : {
+    "ended": 0,
+    "playing": 1,
+    "paused": 2,
+    "unstarted":-1  
+  },
   onPlayerReady: function (event) {
   },
   onPlayerStateChange: function (event) {
@@ -37,7 +43,7 @@ window.YoutubePlayer.prototype = {
   play: function () {
     this.player.playVideo();
     this.playing = true;
-    // this.setSliderTimeout();
+    this.onPlayerStateChange(this.state.playing);
 
     if (this.config.captionsOn && this.captions) {
       this.setCaptionTimeout();
@@ -45,14 +51,19 @@ window.YoutubePlayer.prototype = {
   },
   pause: function () {
     this.player.pauseVideo();
-    // this.clearSliderTimeout();
+    this.onPlayerStateChange(this.state.paused);
 
     if (this.config.captionsOn && this.captions) {
       this.clearCaptionTimeout();
     }
   },
   ffwd: function () {
-    var time = this.getCurrentTime() + 10;
+    var time = this.getCurrentTime() + 10,
+        duration = this.getDuration();
+
+    if (time > duration) {
+      time = duration;
+    }
     this.seek(time);
   },
   rewd: function () {
@@ -93,5 +104,5 @@ window.YoutubePlayer.prototype = {
   seek: function (time) {
     this.player.seekTo(time, true);
   },
-  cue: function () { return; }
+  cue: function () { this.player.cueVideoById(this.config.media); }
 };
