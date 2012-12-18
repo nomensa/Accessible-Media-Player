@@ -6,7 +6,7 @@ describe("YoutubeDecorator", function () {
     'paused': 2,
     'playing': 1,
     'unstarted': -1
-  }
+  };
 
   var defaultConfig = {
     id: 'wrapper-decorator',
@@ -35,7 +35,7 @@ describe("YoutubeDecorator", function () {
     logoURL: 'http://www.nomensa.com?ref=logo',
     useHtml5: true,
     swfCallback: null
-  }
+  };
 
   var cleanUpYoutubeDOM = function () {
     var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0],
@@ -62,16 +62,16 @@ describe("YoutubeDecorator", function () {
     createWrapperDiv();
     spyOn(YoutubePlayer.prototype, "onPlayerReady");
     player = new YoutubePlayer(defaultConfig);
+
+    waitsFor(function() {
+      return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+    }, "onPlayerReady function called", 10e3);
+
+    runs(function () {}); // dummy function to delay test execution
   });
 
   afterEach(function () {
-    waitsFor(function() {
-        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
-    }, "onPlayerReady function called", 10e3);
-
-    runs(function () {
-      cleanUpYoutubeDOM();
-    });
+    cleanUpYoutubeDOM();
 
     player = null;
   });
@@ -81,6 +81,13 @@ describe("YoutubeDecorator", function () {
 
     beforeEach(function () {
       decorator = new YoutubeDecorator(player);
+      for (var method in player) {
+        if (typeof player[method] === "function") {
+          if (method !== 'onPlayerReady') { // already being spied on
+            spyOn(player, method);
+          }
+        }
+      }
     });
 
     afterEach(function () {
@@ -89,40 +96,19 @@ describe("YoutubeDecorator", function () {
 
     it("should have all of the functions that YoutubePlayer has", function () {
       for (var method in player) {
-        if (typeof method === "function") {
+        if (typeof player[method] === "function") {
           expect(decorator[method]).toBeDefined();
-          expect(decorator[method]).toBe(player[method]);
         }
       }
     });
 
-    // Disabled as this test block doesn't work as expected.
-    xit("should pass the method calls down to the YoutubePlayer", function () {
-      waitsFor(function() {
-        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
-      }, "onPlayerReady function called", 10e3);
-
-      runs(function () {
-        expect(player.getPlayer().getPlayerState()).toBe(state.unstarted);
-        decorator.play();
-
-        waitsFor(function () {
-          return player.getPlayer().getPlayerState() === state.playing;
-        }, "the player is playing", 10e3);
-
-        runs(function () {
-          expect(player.getPlayer().getPlayerState()).toBe(state.playing);
-          decorator.pause();
-
-          waitsFor(function () {
-            return player.getPlayer().getPlayerState() === state.paused;
-          }, "the player is paused", 10e3);
-
-          runs(function () {
-            cleanUpYoutubeDOM();
-          });
-        });
-      });
+    it("should pass the method calls down to the YoutubePlayer", function () {
+      for(var method in player) {
+        if (typeof player[method] === "function") {
+          decorator[method]();
+          expect(player[method]).toHaveBeenCalled();
+        }
+      }
     });
   });
 });

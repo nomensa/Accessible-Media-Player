@@ -10,9 +10,11 @@ window.YoutubeDecorator = function (youtubePlayer) {
    */
   for (var method in player) {
     if (typeof player[method] === "function") {
-      this[method] = function() {
-        player[method].apply(player, arguments);
-      }
+      this[method] = (function(mthd) {
+        return function () {
+          player[mthd].apply(player, arguments);
+        };
+      }(method));
     }
   }
 };
