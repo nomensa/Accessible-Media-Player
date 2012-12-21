@@ -91,12 +91,13 @@ describe("Youtube Player", function() {
   describe("Initialising the YoutubePlayer object", function () {
     it("should add a script tag to the document head for the Youtube API", function () {
       var youtube,
-          youtubePlayer;
+          youtubePlayer,
+          $holder = $("<span />");
 
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(0);
       youtubePlayer = new YoutubePlayer(defaultConfig);
       youtube = new YoutubeDecorator(youtubePlayer);
-      youtube.init();
+      youtube.init($holder);
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(1);
 
       cleanUpYoutubeDOM();
@@ -104,13 +105,14 @@ describe("Youtube Player", function() {
 
     it("should call the YoutubePlayer.onPlayerReady method", function () {
       var youtube,
-          youtubePlayer;
+          youtubePlayer,
+          $holder = $("<span />");
 
       createWrapperDiv();
       spyOn(YoutubePlayer.prototype, "onPlayerReady");
       youtubePlayer = new YoutubePlayer(defaultConfig);
       youtube = new YoutubeDecorator(youtubePlayer);
-      youtube.init();
+      youtube.init($holder);
 
       waitsFor(function() {
         return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
@@ -138,16 +140,17 @@ describe("Youtube Player", function() {
 
     beforeEach(function () {
       createWrapperDiv();
-      spyOn(YoutubePlayer.prototype, "onPlayerReady");
       youtube = new YoutubePlayer(defaultConfig);
       youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
                            "playVideo", "pauseVideo", "seekTo", "mute",
                            "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
                            "getPlayerState", "getPlayer", "getVideoBytesLoaded",
                            "getVideoBytesTotal", "onPlayerReady", "getDuration",
-                           "cueVideoById"
+                           "cueVideoById" 
                           ]);
       youtube.player = youtubeAPISpy;
+      youtube.setSliderTimeout = jasmine.createSpy("setSliderTimeout");
+      youtube.clearSliderTimeout = jasmine.createSpy("clearSliderTimeout");
     });
 
     afterEach(function () {
@@ -167,17 +170,29 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
+    it("should call onPlayerStateChange method when a video plays", function () {
+      spyOn(youtube, 'onPlayerStateChange');
+      youtube.play();
+      expect(youtube.onPlayerStateChange).toHaveBeenCalled();
+      expect(youtube.onPlayerStateChange.mostRecentCall.args[0]).toEqual(state.playing);
+      cleanUpYoutubeDOM();
+    });
+
+    it("should call setSliderTimeout method when a video plays", function () {
+      youtube.play();
+      expect(youtube.setSliderTimeout).toHaveBeenCalled();
+      cleanUpYoutubeDOM();
+    });
+
     it("should call pauseVideo method on YT player when pause is called", function () {
       youtube.pause();
       expect(youtube.player.pauseVideo).toHaveBeenCalled();
       cleanUpYoutubeDOM();
     });
 
-    it("should call onPlayerStateChange method when a video plays", function () {
-      spyOn(youtube, 'onPlayerStateChange');
-      youtube.play();
-      expect(youtube.onPlayerStateChange).toHaveBeenCalled();
-      expect(youtube.onPlayerStateChange.mostRecentCall.args[0]).toEqual(state.playing);
+    it("should call clearSliderTimeout method when a video paused", function () {
+      youtube.pause();
+      expect(youtube.clearSliderTimeout).toHaveBeenCalled();
       cleanUpYoutubeDOM();
     });
 
@@ -203,16 +218,31 @@ describe("Youtube Player", function() {
     });
 
     it("should call equivalent method on YT player when mute is called", function () {
+      youtube.$html = $("<span><button class='mute'></button</span>");
       youtube.mute();
       expect(youtube.player.mute).toHaveBeenCalled();
       cleanUpYoutubeDOM();
     });
 
     it("should call unMute method on YT player when mute is called while muted", function () {
+      youtube.$html = $("<span><button class='mute'></button</span>");
       youtube.player.isMuted = function () { return true; };
       youtube.mute();
       expect(youtube.player.unMute).toHaveBeenCalled();
       cleanUpYoutubeDOM();
+    });
+
+    it("should change the mute button correctly when muted", function () {
+      youtube.$html = $("<span><button class='mute'></button</span>");
+      youtube.mute();
+      expect(youtube.$html.find("button.mute").hasClass("muted")).toBe(true);
+    });
+
+    it("should change the mute button correctly when unmuted", function () {
+      youtube.player.isMuted = function () { return true; };
+      youtube.$html = $("<span><button class='mute muted'></button</span>");
+      youtube.mute();
+      expect(youtube.$html.find("button.mute").hasClass("muted")).toBe(false);
     });
 
     it("should call equivalent method on YT player when getDuration is called", function () {
@@ -249,7 +279,7 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
-    it("should move the time by 0 seconds when fast-forwarded from end time", function () {
+    it("should move the time by the amount specified in config.player_skip when fast-forwarded from end time", function () {
       youtube.player.getCurrentTime = function () { return 50; };
       youtube.player.getDuration = function () { return 50; };
 
@@ -258,7 +288,7 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
-    it("should move the time by 0 seconds when rewound from start time", function () {
+    it("should move the time by the amount specified in config.player_skip when rewound from start time", function () {
       youtube.player.getCurrentTime = function () { return 0; };
 
       youtube.rewd();
@@ -271,7 +301,7 @@ describe("Youtube Player", function() {
 
       youtube.voldwn();
       expect(youtube.player.setVolume).toHaveBeenCalled();
-      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(49);
+      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(50 - youtube.config.volumeStep);
       cleanUpYoutubeDOM();
     });
 
@@ -280,7 +310,7 @@ describe("Youtube Player", function() {
 
       youtube.volup();
       expect(youtube.player.setVolume).toHaveBeenCalled();
-      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(51);
+      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(50 + youtube.config.volumeStep);
       cleanUpYoutubeDOM();
     });
 
@@ -306,6 +336,60 @@ describe("Youtube Player", function() {
       youtube.cue();
       expect(youtube.player.cueVideoById).toHaveBeenCalled();
       expect(youtube.player.cueVideoById.mostRecentCall.args[0]).toEqual(youtube.config.media);
+    });
+  });
+
+  describe("When a video is accompanied by captions", function () {
+    var youtube,
+        youtubePlayer;
+
+    beforeEach(function () {
+      var config = defaultConfig;
+
+      config.captionsOn = true;
+      config.captions = "/test/assets/captions-hidden-elements.xml";
+      createWrapperDiv();
+      spyOn(YoutubeDecorator.prototype, "getCaptions").andCallFake(function () {
+        this.captions = $("<p />");
+      });
+      spyOn(YoutubeDecorator.prototype, "setSliderTimeout");
+      spyOn(YoutubeDecorator.prototype, "clearSliderTimeout");
+      spyOn(YoutubeDecorator.prototype, "setCaptionTimeout");
+      spyOn(YoutubeDecorator.prototype, "clearCaptionTimeout");
+      spyOn(YoutubeDecorator.prototype, "getPreviousCaption");
+      youtubePlayer = new YoutubePlayer(config);
+      youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
+                           "playVideo", "pauseVideo", "seekTo", "mute",
+                           "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
+                           "getPlayerState", "getPlayer", "getVideoBytesLoaded",
+                           "getVideoBytesTotal", "onPlayerReady", "getDuration",
+                           "cueVideoById" 
+                          ]);
+      youtubePlayer.player = youtubeAPISpy;
+      youtube = new YoutubeDecorator(youtubePlayer);
+      youtube.init($("<span />"));
+    });
+
+    afterEach(function () {
+      youtube = null;
+    });
+
+    it("should add call the getCaptions method", function () {
+      expect(YoutubeDecorator.prototype.getCaptions).toHaveBeenCalled(); 
+    });
+
+    it("should call setCaptionTimeout method when captions are on and a video plays", function () {
+      youtube.play();
+      expect(youtube.setCaptionTimeout).toHaveBeenCalled();
+      cleanUpYoutubeDOM();
+    });
+
+    it("should call required caption methods when seek method is used", function () {
+      youtube.seek(60);
+      expect(youtube.clearCaptionTimeout).toHaveBeenCalled();
+      expect(youtube.setCaptionTimeout).toHaveBeenCalled();
+      expect(youtube.getPreviousCaption).toHaveBeenCalled();
+      cleanUpYoutubeDOM();
     });
   });
 });

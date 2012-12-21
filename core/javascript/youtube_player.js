@@ -6,7 +6,7 @@ window.YoutubePlayer.prototype = {
   /*
    * Initialisation function to be called when instance has all required methods (post decoration)
    */
-  init : function () {
+  init : function ($holder) {
     var tag = document.createElement('script'),
     firstScriptTag = document.getElementsByTagName('script')[0],
     inst = this;
@@ -14,6 +14,11 @@ window.YoutubePlayer.prototype = {
     tag.src = "//www.youtube.com/iframe_api";
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     this.$html = this.assembleHTML();
+
+    if(this.config.captions){
+            this.getCaptions();
+    }
+    $holder.html(this.$html);
 
     window.onYouTubeIframeAPIReady = function () {
       inst.player = new YT.Player(inst.config.id, {
@@ -56,7 +61,7 @@ window.YoutubePlayer.prototype = {
   is_html5: false,
   play: function () {
     this.player.playVideo();
-    this.playing = true;
+    this.setSliderTimeout();
     this.onPlayerStateChange(this.state.playing);
 
     if (this.config.captionsOn && this.captions) {
@@ -65,6 +70,7 @@ window.YoutubePlayer.prototype = {
   },
   pause: function () {
     this.player.pauseVideo();
+    this.clearSliderTimeout();
     this.onPlayerStateChange(this.state.paused);
 
     if (this.config.captionsOn && this.captions) {
@@ -72,7 +78,7 @@ window.YoutubePlayer.prototype = {
     }
   },
   ffwd: function () {
-    var time = this.getCurrentTime() + 10,
+    var time = this.getCurrentTime() + this.config.playerSkip,
         duration = this.getDuration();
 
     if (time > duration) {
@@ -81,7 +87,7 @@ window.YoutubePlayer.prototype = {
     this.seek(time);
   },
   rewd: function () {
-    var time = this.getCurrentTime() - 10;
+    var time = this.getCurrentTime() - this.config.playerSkip;
 
     if (time < 0) {
       time = 0;
@@ -89,19 +95,24 @@ window.YoutubePlayer.prototype = {
     this.seek(time);
   },
   mute: function () {
-    if (!this.player.isMuted()) {
-      this.player.mute();
+    var $button = this.$html.find('button.mute');
+    if (this.player.isMuted()) {
+        this.player.unMute();
+        if ($button.hasClass('muted')) {
+            $button.removeClass('muted');
+        }
     } else {
-      this.player.unMute();
+        this.player.mute();
+        $button.addClass('muted');
     }
   },
   volup: function () {
     var currentVolume = this.player.getVolume();
-    this.player.setVolume(currentVolume >= 100 ? 100 : currentVolume + 1);
+    this.player.setVolume(currentVolume >= 100 ? 100 : currentVolume + this.config.volumeStep);
   },
   voldwn: function () {
     var currentVolume = this.player.getVolume();
-    this.player.setVolume(currentVolume <= 0 ? 0 : currentVolume - 1);
+    this.player.setVolume(currentVolume <= 0 ? 0 : currentVolume - this.config.volumeStep);
   },
   getDuration: function () {
     return this.player.getDuration();
@@ -117,6 +128,12 @@ window.YoutubePlayer.prototype = {
   },
   seek: function (time) {
     this.player.seekTo(time, true);
+    if (this.config.captionsOn && this.captions) {
+        this.$html.find('.caption').remove();
+        this.clearCaptionTimeout();
+        this.setCaptionTimeout();
+        this.getPreviousCaption();
+    }
   },
   cue: function () { this.player.cueVideoById(this.config.media); }
 };

@@ -919,7 +919,7 @@ var html5_methods = {
                               original_onready();
                               setUp(this);
                             };
-                            player.init();
+                            player.init($self);
                           } else {
                             // Create a new media player object
                             var player = new mediaplayer(i);

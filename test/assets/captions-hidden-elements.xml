@@ -1,0 +1,20 @@
+<tt xmlns="http://www.w3.org/2006/10/ttaf1">
+  <body>
+    <div xml:id="captions">
+      <p begin="00:00:09" end="00:00:10">[Léonie Watson]</p>
+      <p begin="00:00:10" end="00:00:16">Adding a product to your shopping basket is probably the single most important thing that you can do on a retail website.</p>
+      <p begin="00:00:16" end="00:00:23">Using a screen reader on this well known UK brand website, that simply isn't possible.</p>
+      <p begin="00:00:23" end="00:00:28">When you go through the page there's no "add to basket" that's aknowledged by the screen reader.</p>
+	  <p begin="00:00:28" end="00:00:29">[screen reader]</p>
+      <p begin="00:00:29" end="00:00:33">Two pounds and twenty-four pence, list of one items.</p>
+      <p begin="00:00:33" end="00:00:35">Link three for 2 on selected dental, list end.</p>
+      <p begin="00:00:35" end="00:00:36">Collect eight points with this purchase.</p>
+      <p begin="00:00:36" end="00:00:41">One hundred, vertical bar, two pounds and twenty-four pence per one hundred.</p>
+      <p begin="00:00:41" end="00:00:42">Quantity, edit, one.</p>
+      <p begin="00:00:42" end="00:00:48">In stock, Free collection in twenty-four hundred stores, delivery in four working days from two pounds and ninety five pence.</p>
+	  <p begin="00:00:48" end="00:00:49">[Léonie Watson]</p>
+      <p begin="00:00:49" end="00:00:54">An accessibility audit from Nomensa would have picked up this error and given you a solution to rectify it...</p>
+      <p begin="00:00:54" end="00:00:59">...making sure that your website operates effectively for all of your customers.</p>
+	</div>
+  </body>
+</tt>
