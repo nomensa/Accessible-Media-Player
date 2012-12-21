@@ -83,8 +83,6 @@ describe("jquery.player tests (integration)", function () {
       wrapper.appendChild(videoLink);
 
       youtubeId = videoLink.href.split("=")[1];
-
-      spyOn(window, "YoutubePlayer");
     });
 
     afterEach(function () {
@@ -104,12 +102,6 @@ describe("jquery.player tests (integration)", function () {
         holder.append(videoLink);
         $("#wrapper").append(holder);
 
-        // Initialise the player.
-        holder.player({
-          id: 'youtube1',
-          media: youtubeId
-        });
-
         expectedConfig.id = 'youtube1';
         expectedConfig.media = youtubeId;
       });
@@ -124,10 +116,51 @@ describe("jquery.player tests (integration)", function () {
       });
 
       it("should call the YoutubePlayer constructor", function () {
+        spyOn(window, "YoutubePlayer").andCallFake(function () {
+          return {
+            init : function () {}
+          }
+        });
+
+
+        // Initialise the player.
+        holder.player({
+          id: 'youtube1',
+          media: youtubeId
+        });
         expect(window.YoutubePlayer).toHaveBeenCalled();
       });
 
+      it("should call the YoutubeDecorator constructor", function () {
+        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+          return {
+            init : function () {}
+          }
+        });
+
+        // Initialise the player.
+        holder.player({
+          id: 'youtube1',
+          media: youtubeId
+        });
+        expect(window.YoutubeDecorator).toHaveBeenCalled();
+      });
+
       describe("Call the YoutubePlayer constructor", function () {
+        beforeEach(function () {
+          spyOn(window, "YoutubePlayer").andCallFake(function () {
+            return {
+              init : function () {}
+            };
+          });
+
+          // Initialise the player.
+          holder.player({
+            id: 'youtube1',
+            media: youtubeId
+          });
+        });
+
         it("should recieve a single argument", function () {
           expect(window.YoutubePlayer.calls[0].args[0]).toBeDefined();
         });
@@ -139,6 +172,44 @@ describe("jquery.player tests (integration)", function () {
         it("should recieve the default config", function () {
           expect(window.YoutubePlayer.calls[0].args[0]).toEqual(expectedConfig);
         });
+      });
+
+      it("should call the YoutubeDecorator constructor with an instance of YoutubePlayer", function () {
+        var config = defaultConfig,
+            youTubePlayerCopy;
+
+        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+          return {
+            init : function () {}
+          };
+        });
+
+        // Initialise the player.
+        holder.player({
+          id: 'youtube1',
+          media: youtubeId
+        });
+
+        config.id = 'youtube1';
+        config.media = youtubeId;
+        youTubePlayerCopy = new YoutubePlayer(config);
+        expect(window.YoutubeDecorator.mostRecentCall.args[0]).toEqual(youTubePlayerCopy);
+      });
+
+      it("should call the init method of the returned instance", function () {
+        var spyInst = jasmine.createSpyObj("spyInst", ["init"]);
+
+        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+          return spyInst;
+        });
+
+        // Initialise the player.
+        holder.player({
+          id: 'youtube1',
+          media: youtubeId
+        });
+
+        expect(spyInst.init).toHaveBeenCalled();
       });
     });
   });

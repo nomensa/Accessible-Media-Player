@@ -1,35 +1,49 @@
 window.YoutubePlayer = function (config) {
-  var tag = document.createElement('script'),
-  firstScriptTag = document.getElementsByTagName('script')[0],
-  inst = this;
-
   this.config = config;
-  tag.src = "//www.youtube.com/iframe_api";
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-  window.onYouTubeIframeAPIReady = function () {
-    inst.player = new YT.Player(config.id, {
-      height: config.playerStyles.height,
-      width: config.playerStyles.width,
-      videoId: config.media,
-      events: {
-        'onReady': inst.onPlayerReady,
-        'onStateChange': inst.onPlayerStateChange
-      }
-    });
-  };
 };
 
 window.YoutubePlayer.prototype = {
+  /*
+   * Initialisation function to be called when instance has all required methods (post decoration)
+   */
+  init : function () {
+    var tag = document.createElement('script'),
+    firstScriptTag = document.getElementsByTagName('script')[0],
+    inst = this;
+
+    tag.src = "//www.youtube.com/iframe_api";
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    this.$html = this.assembleHTML();
+
+    window.onYouTubeIframeAPIReady = function () {
+      inst.player = new YT.Player(inst.config.id, {
+        height: inst.config.playerStyles.height,
+        width: inst.config.playerStyles.width,
+        videoId: inst.config.media,
+        events: {
+          'onReady': inst.onPlayerReady,
+          'onStateChange': inst.onPlayerStateChange
+        }
+      });
+    };
+  },
   state : {
     "ended": 0,
     "playing": 1,
     "paused": 2,
     "unstarted":-1  
   },
-  onPlayerReady: function (event) {
+  onPlayerReady : function (event) {
   },
-  onPlayerStateChange: function (event) {
+  onPlayerStateChange : function (event) {
+  },
+  generateVideoPlayer : function($playerContainer){
+    var $video = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id);
+    /* Create our video container */
+    var $videoContainer = $('<span />').addClass('video');
+    // Create our entire player container
+    $playerContainer.append($videoContainer.append($video));
+    return $playerContainer;
   },
   getPlayer: function () {
     return this.player;

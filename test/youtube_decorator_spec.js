@@ -60,20 +60,17 @@ describe("YoutubeDecorator", function () {
 
   beforeEach(function () {
     createWrapperDiv();
-    spyOn(YoutubePlayer.prototype, "onPlayerReady");
-    player = new YoutubePlayer(defaultConfig);
-
-    waitsFor(function() {
-      return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
-    }, "onPlayerReady function called", 10e3);
-
-    runs(function () {}); // dummy function to delay test execution
+    player = jasmine.createSpyObj('youtubeAPISpy', [
+                         "playVideo", "pauseVideo", "seekTo", "mute",
+                         "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
+                         "getPlayerState", "getPlayer", "getVideoBytesLoaded",
+                         "getVideoBytesTotal", "onPlayerReady", "getDuration",
+                         "cueVideoById"
+                        ]);
   });
 
   afterEach(function () {
     cleanUpYoutubeDOM();
-
-    player = null;
   });
 
   describe("Exposing the Youtube Player", function () {
@@ -81,13 +78,6 @@ describe("YoutubeDecorator", function () {
 
     beforeEach(function () {
       decorator = new YoutubeDecorator(player);
-      for (var method in player) {
-        if (typeof player[method] === "function") {
-          if (method !== 'onPlayerReady') { // already being spied on
-            spyOn(player, method);
-          }
-        }
-      }
     });
 
     afterEach(function () {
