@@ -103,79 +103,80 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
-    it("should call the YoutubePlayer.onPlayerReady method correctly", function () {
-      var youtube,
-          youtubePlayer,
-          $holder = $("<span />");
+    describe("YoutubePlayer.onPlayerReady method", function () {
+      it("should run nothing if no functions have been added", function () {
+        var youtube,
+            youtubePlayer,
+            $holder = $("<span />"),
+            eventStub = {
+              'data' : -1,
+              'target' : document.createElement('iframe')
+            },
+            result;
 
-      createWrapperDiv();
-      spyOn(YoutubePlayer.prototype, "onPlayerReady");
-      youtubePlayer = new YoutubePlayer(defaultConfig);
-      youtube = new YoutubeDecorator(youtubePlayer);
-      youtube.init($holder);
+        createWrapperDiv();
+        $("wrapper").append($holder);
+        youtubePlayer = new YoutubePlayer(defaultConfig);
+        youtube = new YoutubeDecorator(youtubePlayer);
+        result = youtube.onPlayerReady(eventStub);
 
-      waitsFor(function() {
-        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
-      }, "onPlayerReady function called", 10e3);
-
-      runs(function () {
-        expect(YoutubePlayer.prototype.onPlayerReady).toHaveBeenCalled();
+        expect(result).toBe(false);
         cleanUpYoutubeDOM();
       });
-    });
 
-    it("should run functions sent to YoutubePlayer.onPlayerReady when it is called", function () {
-      var youtube,
-          youtubePlayer,
-          $holder = $("<span />"),
-          onReadyStub = jasmine.createSpy("onReadyStub");
+      it("should run a function sent to it when called", function () {
+        var youtube,
+            youtubePlayer,
+            $holder = $("<span />"),
+            eventStub = {
+              'data' : -1,
+              'target' : document.createElement('iframe')
+            },
+            onReadyStub = jasmine.createSpy("onReadyStub");
 
-      createWrapperDiv();
-      youtubePlayer = new YoutubePlayer(defaultConfig);
-      youtube = new YoutubeDecorator(youtubePlayer);
-      youtube.onPlayerReady(onReadyStub);
-
-      youtube.init($holder);
-
-      waitsFor(function() {
-        return onReadyStub.callCount > 0;
-      }, "onPlayerReady function called", 10e3);
-
-      runs(function () {
-        // check this call was sent the event object
+        createWrapperDiv();
+        $("wrapper").append($holder);
+        youtubePlayer = new YoutubePlayer(defaultConfig);
+        youtube = new YoutubeDecorator(youtubePlayer);
+        youtube.onPlayerReady(onReadyStub);
+        youtube.onPlayerReady(eventStub);
         expect(onReadyStub).toHaveBeenCalled();
+        expect(onReadyStub.mostRecentCall.args[0]).toBe(eventStub);
         cleanUpYoutubeDOM();
       });
-    });
 
-    it("should call the YoutubePlayer.onPlayerStateChange with the correct state", function () {
-      var youtube,
-          youtubePlayer,
-          $holder = $("<span />");
+      it("should run functions sent to it in the order they were added", function () {
+        var youtube,
+            youtubePlayer,
+            $holder = $("<span />"),
+            eventStub = {
+              'data' : -1,
+              'target' : document.createElement('iframe')
+            },
+            stubCalls = [],
+            stubs = {
+              onReady1 : function () {
+                stubCalls.push('onReady1');
+              },
+              onReady2 : function () {
+                stubCalls.push('onReady2');
+              }
+            };
 
-      // These states are taken directly from the YT API docs.
-      // Link: https://developers.google.com/youtube/js_api_reference
-      var state = {
-        'ended': 0,
-        'paused': 2,
-        'playing': 1,
-        'unstarted': -1
-      }
+        spyOn(stubs, "onReady1").andCallThrough();
+        spyOn(stubs, "onReady2").andCallThrough();
 
-      createWrapperDiv();
-      spyOn(YoutubePlayer.prototype, "onPlayerReady");
-      spyOn(YoutubePlayer.prototype, "onPlayerStateChange");
-      youtubePlayer = new YoutubePlayer(defaultConfig);
-      youtube = new YoutubeDecorator(youtubePlayer);
-      youtube.init($holder);
-
-      waitsFor(function() {
-        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
-      }, "onPlayerReady function called", 10e3);
-
-      runs(function () {
-        expect(YoutubePlayer.prototype.onPlayerStateChange).toHaveBeenCalled();
-        expect(YoutubePlayer.prototype.onPlayerStateChange.mostRecentCall.args[0]).toBe(state.unstarted);
+        createWrapperDiv();
+        $("wrapper").append($holder);
+        youtubePlayer = new YoutubePlayer(defaultConfig);
+        youtube = new YoutubeDecorator(youtubePlayer);
+        youtube.onPlayerReady(stubs.onReady1);
+        youtube.onPlayerReady(stubs.onReady2);
+        youtube.onPlayerReady(eventStub);
+        expect(stubs.onReady1).toHaveBeenCalled();
+        expect(stubs.onReady2).toHaveBeenCalled();
+        expect(stubCalls[0]).toBe('onReady1');
+        expect(stubCalls[1]).toBe('onReady2');
         cleanUpYoutubeDOM();
       });
     });

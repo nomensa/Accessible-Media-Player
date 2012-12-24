@@ -57,6 +57,7 @@ window.YoutubePlayer.prototype = {
       if (typeof param === 'function') {
         actions.push(param);
       } else {
+        if (actionsLen === 0) { return false; }
         for (i = 0; i < actionsLen; i++) {
           actions[i].apply(this, arguments);
         }
