@@ -96,7 +96,7 @@ describe("Youtube Player", function() {
 
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(0);
       youtubePlayer = new YoutubePlayer(defaultConfig);
-      youtube = new YoutubeDecorator(youtubePlayer);
+      youtube = new MediaplayerDecorator(youtubePlayer);
       youtube.init($holder);
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(1);
 
@@ -117,7 +117,7 @@ describe("Youtube Player", function() {
         createWrapperDiv();
         $("wrapper").append($holder);
         youtubePlayer = new YoutubePlayer(defaultConfig);
-        youtube = new YoutubeDecorator(youtubePlayer);
+        youtube = new MediaplayerDecorator(youtubePlayer);
         result = youtube.onPlayerReady(eventStub);
 
         expect(result).toBe(false);
@@ -137,7 +137,7 @@ describe("Youtube Player", function() {
         createWrapperDiv();
         $("wrapper").append($holder);
         youtubePlayer = new YoutubePlayer(defaultConfig);
-        youtube = new YoutubeDecorator(youtubePlayer);
+        youtube = new MediaplayerDecorator(youtubePlayer);
         youtube.onPlayerReady(onReadyStub);
         youtube.onPlayerReady(eventStub);
         expect(onReadyStub).toHaveBeenCalled();
@@ -169,7 +169,7 @@ describe("Youtube Player", function() {
         createWrapperDiv();
         $("wrapper").append($holder);
         youtubePlayer = new YoutubePlayer(defaultConfig);
-        youtube = new YoutubeDecorator(youtubePlayer);
+        youtube = new MediaplayerDecorator(youtubePlayer);
         youtube.onPlayerReady(stubs.onReady1);
         youtube.onPlayerReady(stubs.onReady2);
         youtube.onPlayerReady(eventStub);
@@ -389,14 +389,14 @@ describe("Youtube Player", function() {
       config.captionsOn = true;
       config.captions = "/test/assets/captions-hidden-elements.xml";
       createWrapperDiv();
-      spyOn(YoutubeDecorator.prototype, "getCaptions").andCallFake(function () {
+      spyOn(MediaplayerDecorator.prototype, "getCaptions").andCallFake(function () {
         this.captions = $("<p />");
       });
-      spyOn(YoutubeDecorator.prototype, "setSliderTimeout");
-      spyOn(YoutubeDecorator.prototype, "clearSliderTimeout");
-      spyOn(YoutubeDecorator.prototype, "setCaptionTimeout");
-      spyOn(YoutubeDecorator.prototype, "clearCaptionTimeout");
-      spyOn(YoutubeDecorator.prototype, "getPreviousCaption");
+      spyOn(MediaplayerDecorator.prototype, "setSliderTimeout");
+      spyOn(MediaplayerDecorator.prototype, "clearSliderTimeout");
+      spyOn(MediaplayerDecorator.prototype, "setCaptionTimeout");
+      spyOn(MediaplayerDecorator.prototype, "clearCaptionTimeout");
+      spyOn(MediaplayerDecorator.prototype, "getPreviousCaption");
       youtubePlayer = new YoutubePlayer(config);
       youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
                            "playVideo", "pauseVideo", "seekTo", "mute",
@@ -406,7 +406,7 @@ describe("Youtube Player", function() {
                            "cueVideoById" 
                           ]);
       youtubePlayer.player = youtubeAPISpy;
-      youtube = new YoutubeDecorator(youtubePlayer);
+      youtube = new MediaplayerDecorator(youtubePlayer);
       youtube.init($("<span />"));
     });
 
@@ -415,7 +415,7 @@ describe("Youtube Player", function() {
     });
 
     it("should add call the getCaptions method", function () {
-      expect(YoutubeDecorator.prototype.getCaptions).toHaveBeenCalled(); 
+      expect(MediaplayerDecorator.prototype.getCaptions).toHaveBeenCalled(); 
     });
 
     it("should call setCaptionTimeout method when captions are on and a video plays", function () {

@@ -150,8 +150,8 @@ describe("jquery.player tests (integration)", function () {
         });
       });
 
-      it("should call the YoutubeDecorator constructor", function () {
-        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+      it("should call the MediaplayerDecorator constructor", function () {
+        spyOn(window, "MediaplayerDecorator").andCallFake(function () {
           // methods do not need to be spys so just stub
           return {
             init : function () {},
@@ -165,14 +165,14 @@ describe("jquery.player tests (integration)", function () {
           id: 'youtube1',
           media: youtubeId
         });
-        expect(window.YoutubeDecorator).toHaveBeenCalled();
+        expect(window.MediaplayerDecorator).toHaveBeenCalled();
       });
 
-      it("should call the YoutubeDecorator constructor with an instance of YoutubePlayer", function () {
+      it("should call the MediaplayerDecorator constructor with an instance of YoutubePlayer", function () {
         var config = defaultConfig,
             youTubePlayerCopy;
 
-        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+        spyOn(window, "MediaplayerDecorator").andCallFake(function () {
           // methods do not need to be spys so just stub
           return {
             init : function () {},
@@ -190,13 +190,13 @@ describe("jquery.player tests (integration)", function () {
         config.id = 'youtube1';
         config.media = youtubeId;
         youTubePlayerCopy = new YoutubePlayer(config);
-        expect(window.YoutubeDecorator.mostRecentCall.args[0]).toEqual(youTubePlayerCopy);
+        expect(window.MediaplayerDecorator.mostRecentCall.args[0]).toEqual(youTubePlayerCopy);
       });
 
       it("should call the init method of the returned instance", function () {
         var spyInst = jasmine.createSpyObj("spyInst", ["init", "onPlayerReady", "onPlayerChange"]);
 
-        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+        spyOn(window, "MediaplayerDecorator").andCallFake(function () {
           return spyInst;
         });
 

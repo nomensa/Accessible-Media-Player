@@ -1,4 +1,4 @@
-describe("YoutubeDecorator", function () {
+describe("MediaPlayerDecorator", function () {
   var player;
 
   var state = {
@@ -77,7 +77,7 @@ describe("YoutubeDecorator", function () {
     var decorator;
 
     beforeEach(function () {
-      decorator = new YoutubeDecorator(player);
+      decorator = new MediaplayerDecorator(player);
     });
 
     afterEach(function () {

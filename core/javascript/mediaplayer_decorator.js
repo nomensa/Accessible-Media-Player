@@ -1,5 +1,5 @@
-window.YoutubeDecorator = function (youtubePlayer) {
-  var player = youtubePlayer,
+window.MediaplayerDecorator = function (mediaplayer) {
+  var player = mediaplayer,
       inst = this;
 
   /**
@@ -29,7 +29,7 @@ window.YoutubeDecorator = function (youtubePlayer) {
 * holds the media and the controls
 * @return {obj}: A jQuery wrapped set
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.generatePlayerContainer = function() {
+window.MediaplayerDecorator.prototype.generatePlayerContainer = function() {
   var $container = $('<'+this.config.playerContainer+' />').css(this.config.playerStyles).addClass('player-container');
   if($.browser.msie){
     $container.addClass('player-container-ie player-container-ie-'+$.browser.version.substring(0, 1));
@@ -41,7 +41,7 @@ window.YoutubeDecorator.prototype.generatePlayerContainer = function() {
 * This is just a wrapper for a number of other method calls
 * Help us to organise our methods better
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.assembleHTML = function(){
+window.MediaplayerDecorator.prototype.assembleHTML = function(){
   var $playerContainer = this.generatePlayerContainer();
   // generateVideoPlayer is specific to player type
   var $videoContainer = this.generateVideoPlayer($playerContainer);
@@ -50,11 +50,9 @@ window.YoutubeDecorator.prototype.assembleHTML = function(){
 };
 /*
 * Method for getting the url to embed the player
-* Youtube player allows you to pass an id in as part of a querystring
-* This will then be passed into the 'onYoutubePlayerReady' function
 * @return {string}: a url
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getURL = function(){
+window.MediaplayerDecorator.prototype.getURL = function(){
   return [this.config.url, this.config.id].join('');
 };
 /*
@@ -63,7 +61,7 @@ window.YoutubeDecorator.prototype.getURL = function(){
 * @param action {string}: the action that the button will 
 * trigger such as 'play', 'pause', 'ffwd' and 'rwd'.
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.createButton = function(action, name) {
+window.MediaplayerDecorator.prototype.createButton = function(action, name) {
   var $label = 0;
   var btnId = [action, this.config.id].join('-');
 
@@ -96,7 +94,7 @@ window.YoutubeDecorator.prototype.createButton = function(action, name) {
 * @return {obj}: A jQuery wrapped set representing our 
 * controls and container
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getFuncControls = function(){
+window.MediaplayerDecorator.prototype.getFuncControls = function(){
   var self = this;
   var $cont = $('<div>');
   $cont[0].className = 'player-controls';
@@ -154,7 +152,7 @@ window.YoutubeDecorator.prototype.getFuncControls = function(){
 * @return {obj}: A jQuery wrapped set representing our 
 * volume controls and container
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getVolControls = function(){
+window.MediaplayerDecorator.prototype.getVolControls = function(){
   var self = this;
   var $cont = $('<div>').addClass('volume-controls');
   var $mute = self.createButton('mute', 'Mute').click(function(){self.mute();});
@@ -176,7 +174,7 @@ window.YoutubeDecorator.prototype.getVolControls = function(){
 * @return {obj}: A jQuery wrapped set, the sliderbar for 
 * the media player
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getSliderBar = function(){
+window.MediaplayerDecorator.prototype.getSliderBar = function(){
   var $info = $('<span />').addClass('ui-helper-hidden-accessible').html('<p>The timeline slider below uses WAI ARIA. Please use the documentation for your screen reader to find out more.</p>');
   var $curr_time = $('<span />').addClass('current-time').attr({'id':'current-'+this.config.id}).text('00:00:00');
   var $slider = this.getSlider();
@@ -197,7 +195,7 @@ window.YoutubeDecorator.prototype.getSliderBar = function(){
 * @return {obj}: A jQuery wrapped set, the sliderbar for 
 * the media player
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getSlider = function(){
+window.MediaplayerDecorator.prototype.getSlider = function(){
   var self = this;
   var $sliderBar = $('<span />')
     .attr('id', 'slider-'+this.config.id)
@@ -234,7 +232,7 @@ window.YoutubeDecorator.prototype.getSlider = function(){
 * @modifies {obj} this: Adds a reference to the timeout so that 
 * it can be cleared easily further down the line
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.setSliderTimeout = function(){
+window.MediaplayerDecorator.prototype.setSliderTimeout = function(){
   var self = this;
   if(self.sliderInterval == undefined){
     self.sliderInterval = setInterval(function() {
@@ -248,7 +246,7 @@ window.YoutubeDecorator.prototype.setSliderTimeout = function(){
 * @modifies {obj} this: Clears down the reference to the 
 * timeout function
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.clearSliderTimeout = function(){
+window.MediaplayerDecorator.prototype.clearSliderTimeout = function(){
   var self = this;
   if(self.sliderInterval != undefined){
     self.sliderInterval = clearInterval(self.sliderInterval);
@@ -257,7 +255,7 @@ window.YoutubeDecorator.prototype.clearSliderTimeout = function(){
 /*
 * Method for updating the position of the slider
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.updateSlider = function(){
+window.MediaplayerDecorator.prototype.updateSlider = function(){
 
   var duration = (typeof(this.duration) != 'undefined') ? this.duration : this.getDuration();
   var duration_found = (typeof(this.duration_found) == 'boolean') ? this.duration_found : false;
@@ -299,7 +297,7 @@ window.YoutubeDecorator.prototype.updateSlider = function(){
 * This has it's own method since loading occurs in the background
 * and may need to update whilst the video is not playing
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.updateLoaderBar = function(){
+window.MediaplayerDecorator.prototype.updateLoaderBar = function(){
   // Work out how much of the video has loaded
   var loaded = (this.getBytesLoaded()/this.getBytesTotal())*100;
   // Ensure that we have an integer
@@ -317,7 +315,7 @@ window.YoutubeDecorator.prototype.updateLoaderBar = function(){
 * @param time {int}: time in seconds
 * @return {string}: A formatted time
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.formatTime = function(time){
+window.MediaplayerDecorator.prototype.formatTime = function(time){
   var hours = 0;
   var minutes = 0;
   var seconds = 0;
@@ -345,7 +343,7 @@ window.YoutubeDecorator.prototype.formatTime = function(time){
 * Method for updating the content of the current time label
 * @param time {int} the amount of time elapsed in seconds
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.updateTime = function(time) {
+window.MediaplayerDecorator.prototype.updateTime = function(time) {
   var t = this.formatTime(parseInt(time, 10));
   this.$html.find('#current-'+this.config.id).html(t);
 };
@@ -353,7 +351,7 @@ window.YoutubeDecorator.prototype.updateTime = function(time) {
 * Method for getting the control bar for the media player
 * @return {obj}: A jQuery wrapped set, the control bar for the media player
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getControls = function(){
+window.MediaplayerDecorator.prototype.getControls = function(){
   var $controls = $('<span />').addClass('ui-corner-bottom').addClass('control-bar');
   // Insert the Nomensa Logo
   var $logo = $('<a />').attr('href', 'http://www.nomensa.com?ref=logo').html('Accessible Media Player by Nomensa').addClass('logo');
@@ -376,7 +374,7 @@ window.YoutubeDecorator.prototype.getControls = function(){
 * and any aria attributes if required
 * @param volume {int}: The new volume of the player
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.updateVolume = function(volume){
+window.MediaplayerDecorator.prototype.updateVolume = function(volume){
   $('#vol-'+this.config.id).text(volume.toString()+'%');
   var $mute = this.$html.find('button.mute');
   if(volume == 0){
@@ -395,7 +393,7 @@ window.YoutubeDecorator.prototype.updateVolume = function(volume){
 * @modifies {obj}: Adds a jQuery wrapped set of caption nodes to
 * the current object
 *------------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getCaptions = function(){
+window.MediaplayerDecorator.prototype.getCaptions = function(){
   var self = this;
   if (self.config.captions){
     var $captions = [];
@@ -409,7 +407,7 @@ window.YoutubeDecorator.prototype.getCaptions = function(){
     });
   }
 };
-window.YoutubeDecorator.prototype.toggleCaptions = function () {
+window.MediaplayerDecorator.prototype.toggleCaptions = function () {
   var self = this;
   var $c = this.$html.find('.captions');
   if ($c.hasClass('captions-off')) {
@@ -428,7 +426,7 @@ window.YoutubeDecorator.prototype.toggleCaptions = function () {
 * Method for updating/inserting the caption into the media player
 * html.
 *-----------------------------------------------------------*/
-window.YoutubeDecorator.prototype.syncCaptions = function(){
+window.MediaplayerDecorator.prototype.syncCaptions = function(){
   var caption;
   if(this.captions){
     var time = this.getCurrentTime();
@@ -443,7 +441,7 @@ window.YoutubeDecorator.prototype.syncCaptions = function(){
 * Method for inserting the caption into the media player dom 
 * @param caption {obj}: A jQuery wrapped node from the captions file
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.insertCaption = function(caption){
+window.MediaplayerDecorator.prototype.insertCaption = function(caption){
   if(this.$html.find('.caption').length == 1){
     this.$html.find('.caption').text(caption.text());
   }else{
@@ -460,7 +458,7 @@ window.YoutubeDecorator.prototype.insertCaption = function(caption){
 * @param time {float}: The time representing the current time of the player
 * If this is null or undefined we will get the current time from the player instance
 *----------------------------------------------------------*/
-window.YoutubeDecorator.prototype.getPreviousCaption = function(time){
+window.MediaplayerDecorator.prototype.getPreviousCaption = function(time){
   var caption;
   if(time == undefined){
     time = this.getCurrentTime();
@@ -484,7 +482,7 @@ window.YoutubeDecorator.prototype.getPreviousCaption = function(time){
 * apis allow us to do this. So provide overridable
 * method stub.
 */
-window.YoutubeDecorator.prototype.destroyPlayerInstance = function(){
+window.MediaplayerDecorator.prototype.destroyPlayerInstance = function(){
   // Youtube does not allow us to destroy
   // the player instance right now. Just return false
   return false;
@@ -494,7 +492,7 @@ window.YoutubeDecorator.prototype.destroyPlayerInstance = function(){
 * Delegates to 'destroyPlayerInstance'
 * for destroying the 3rd party player instance
 */
-window.YoutubeDecorator.prototype.destroy = function(){
+window.MediaplayerDecorator.prototype.destroy = function(){
   this.clearSliderTimeout();
   this.clearCaptionTimeout();
   this.destroyPlayerInstance();
@@ -505,7 +503,7 @@ window.YoutubeDecorator.prototype.destroy = function(){
 * we get some annoying floating point issues.  This is related to
 * a degree of lag because of time taken for traversal.
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.setCaptionTimeout = function(){
+window.MediaplayerDecorator.prototype.setCaptionTimeout = function(){
   var self = this;
   if (self.captionInterval == undefined){ // We don't wanna set more than 1 timeout.  If we do, we cannot turn it off
     self.captionInterval = setInterval(function() {
@@ -516,7 +514,7 @@ window.YoutubeDecorator.prototype.setCaptionTimeout = function(){
 /*
 * Clear the caption timeout
 *---------------------------------------------------------*/
-window.YoutubeDecorator.prototype.clearCaptionTimeout = function(){
+window.MediaplayerDecorator.prototype.clearCaptionTimeout = function(){
   if (this.captionInterval != undefined){ // Make sure the timeout is not undefined before clearing it
     this.captionInterval = clearInterval(this.captionInterval);
   }
