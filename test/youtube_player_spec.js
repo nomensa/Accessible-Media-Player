@@ -391,5 +391,22 @@ describe("Youtube Player", function() {
       expect(youtube.getPreviousCaption).toHaveBeenCalled();
       cleanUpYoutubeDOM();
     });
+
+    it("should turn captions on when toggleCaptions is called when captions are off", function () {
+      youtube.$html = $("<div><div class='captions captions-off'><p class='caption'></p></div></div>");
+      youtube.toggleCaptions();
+      expect(youtube.$html.find(".captions").hasClass("captions-on")).toBe(true);
+      expect(youtube.getPreviousCaption).toHaveBeenCalled();
+      expect(youtube.setCaptionTimeout).toHaveBeenCalled();
+      expect(youtube.config.captionsOn).toBe(true);
+    });
+
+    it("should turn captions off when toggleCaptions is called when captions are on", function () {
+      youtube.$html = $("<div><div class='captions captions-on'><p class='caption'></p></div></div>");
+      youtube.toggleCaptions();
+      expect(youtube.$html.find(".caption").length).toEqual(0);
+      expect(youtube.clearCaptionTimeout).toHaveBeenCalled();
+      expect(youtube.config.captionsOn).toBe(false);
+    });
   });
 });

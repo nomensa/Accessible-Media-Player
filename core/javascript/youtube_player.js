@@ -16,7 +16,7 @@ window.YoutubePlayer.prototype = {
     this.$html = this.assembleHTML();
 
     if(this.config.captions){
-            this.getCaptions();
+      this.getCaptions();
     }
     $holder.html(this.$html);
 
@@ -135,5 +135,20 @@ window.YoutubePlayer.prototype = {
         this.getPreviousCaption();
     }
   },
-  cue: function () { this.player.cueVideoById(this.config.media); }
+  cue: function () { this.player.cueVideoById(this.config.media); },
+  toggleCaptions: function () {
+    var self = this;
+    var $c = this.$html.find('.captions');
+    if ($c.hasClass('captions-off')) {
+      $c.removeClass('captions-off').addClass('captions-on');
+      self.getPreviousCaption();
+      self.setCaptionTimeout();
+      self.config.captionsOn = true;
+    } else {
+      $c.removeClass('captions-on').addClass('captions-off');
+      self.clearCaptionTimeout();
+      self.$html.find('.caption').remove();
+      self.config.captionsOn = false;
+    }
+  }
 };
