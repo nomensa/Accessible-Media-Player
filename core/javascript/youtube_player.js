@@ -26,8 +26,12 @@ window.YoutubePlayer.prototype = {
         width: inst.config.playerStyles.width,
         videoId: inst.config.media,
         events: {
-          'onReady': inst.onPlayerReady,
-          'onStateChange': inst.onPlayerStateChange
+          'onReady': function (event) {
+            inst.onPlayerReady(event);
+          },
+          'onStateChange': function (event) {
+            inst.onPlayerStateChange(event.data);
+          }
         }
       });
     };
@@ -38,9 +42,53 @@ window.YoutubePlayer.prototype = {
     "paused": 2,
     "unstarted":-1  
   },
-  onPlayerReady : function (event) {
-  },
-  onPlayerStateChange : function (event) {
+  onPlayerReady : (function () {
+    var actions = [],
+        i;
+    
+    /**
+     * If run without parameters, assume fired by event
+     * If param is a function, add this to those run when fired
+    */ 
+
+    return function (param) {
+      var actionsLen = actions.length;
+
+      if (typeof param === 'function') {
+        actions.push(param);
+      } else {
+        for (i = 0; i < actionsLen; i++) {
+          actions[i].apply(this, arguments);
+        }
+      }
+    };
+  }()),
+/*
+ * Function that is called on Youtube player state change
+ * We use this to listen for any play commands that have not been initialised
+ * using the media player control panel (e.g. if the play button within the
+ * actual flash element is activated).
+ * 
+ * @param state {int}: The state code for the player when this function is fired
+ *   This code is set by the youtube api.  Can be one of:
+ *     -> -1: Unstarted
+ *     -> 0 : Ended
+ *     -> 1 : Playing
+ *     -> 2 : Paused
+ *     -> 3 : Buffering
+ *     -> 5 : Video Cued
+ * 
+ *---------------------------------------------------------------------------*/ 
+  onPlayerStateChange : function (state) {
+    if(state == 1){
+      this.play();
+      if(this.config.buttons.toggle){       // This seems pretty bad.  Can we not abstract this sort of logic further?
+        this.$html.find('.play').removeClass('play').addClass('pause').text('Pause');
+      }
+    }else if(this.config.repeat && (state == 0)){ // The movie has ended and the config requires the video to repeat
+      // Let's just start the movie again 
+      this.play();
+    }
   },
   generateVideoPlayer : function($playerContainer){
     var $video = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id);
@@ -62,7 +110,6 @@ window.YoutubePlayer.prototype = {
   play: function () {
     this.player.playVideo();
     this.setSliderTimeout();
-    this.onPlayerStateChange(this.state.playing);
 
     if (this.config.captionsOn && this.captions) {
       this.setCaptionTimeout();
@@ -71,7 +118,6 @@ window.YoutubePlayer.prototype = {
   pause: function () {
     this.player.pauseVideo();
     this.clearSliderTimeout();
-    this.onPlayerStateChange(this.state.paused);
 
     if (this.config.captionsOn && this.captions) {
       this.clearCaptionTimeout();

@@ -115,42 +115,14 @@ describe("jquery.player tests (integration)", function () {
         expect(document.querySelectorAll("#wrapper > span").length).toBe(1);
       });
 
-      it("should call the YoutubePlayer constructor", function () {
-        spyOn(window, "YoutubePlayer").andCallFake(function () {
-          return {
-            init : function () {}
-          }
-        });
-
-
-        // Initialise the player.
-        holder.player({
-          id: 'youtube1',
-          media: youtubeId
-        });
-        expect(window.YoutubePlayer).toHaveBeenCalled();
-      });
-
-      it("should call the YoutubeDecorator constructor", function () {
-        spyOn(window, "YoutubeDecorator").andCallFake(function () {
-          return {
-            init : function () {}
-          }
-        });
-
-        // Initialise the player.
-        holder.player({
-          id: 'youtube1',
-          media: youtubeId
-        });
-        expect(window.YoutubeDecorator).toHaveBeenCalled();
-      });
-
       describe("Call the YoutubePlayer constructor", function () {
         beforeEach(function () {
           spyOn(window, "YoutubePlayer").andCallFake(function () {
+            // methods do not need to be spys so just stub
             return {
-              init : function () {}
+              init : function () {},
+              onPlayerReady : function () {},
+              onPlayerStateChange : function () {}
             };
           });
 
@@ -159,6 +131,10 @@ describe("jquery.player tests (integration)", function () {
             id: 'youtube1',
             media: youtubeId
           });
+        });
+
+        it("should call the constructor", function () {
+          expect(window.YoutubePlayer).toHaveBeenCalled();
         });
 
         it("should recieve a single argument", function () {
@@ -174,13 +150,34 @@ describe("jquery.player tests (integration)", function () {
         });
       });
 
+      it("should call the YoutubeDecorator constructor", function () {
+        spyOn(window, "YoutubeDecorator").andCallFake(function () {
+          // methods do not need to be spys so just stub
+          return {
+            init : function () {},
+              onPlayerReady : function () {},
+              onPlayerStateChange : function () {}
+          }
+        });
+
+        // Initialise the player.
+        holder.player({
+          id: 'youtube1',
+          media: youtubeId
+        });
+        expect(window.YoutubeDecorator).toHaveBeenCalled();
+      });
+
       it("should call the YoutubeDecorator constructor with an instance of YoutubePlayer", function () {
         var config = defaultConfig,
             youTubePlayerCopy;
 
         spyOn(window, "YoutubeDecorator").andCallFake(function () {
+          // methods do not need to be spys so just stub
           return {
-            init : function () {}
+            init : function () {},
+            onPlayerReady : function () {},
+            onPlayerStateChange : function () {}
           };
         });
 
@@ -197,7 +194,7 @@ describe("jquery.player tests (integration)", function () {
       });
 
       it("should call the init method of the returned instance", function () {
-        var spyInst = jasmine.createSpyObj("spyInst", ["init"]);
+        var spyInst = jasmine.createSpyObj("spyInst", ["init", "onPlayerReady", "onPlayerChange"]);
 
         spyOn(window, "YoutubeDecorator").andCallFake(function () {
           return spyInst;

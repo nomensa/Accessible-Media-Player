@@ -103,7 +103,7 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
-    it("should call the YoutubePlayer.onPlayerReady method", function () {
+    it("should call the YoutubePlayer.onPlayerReady method correctly", function () {
       var youtube,
           youtubePlayer,
           $holder = $("<span />");
@@ -120,7 +120,62 @@ describe("Youtube Player", function() {
 
       runs(function () {
         expect(YoutubePlayer.prototype.onPlayerReady).toHaveBeenCalled();
+        cleanUpYoutubeDOM();
+      });
+    });
 
+    it("should run functions sent to YoutubePlayer.onPlayerReady when it is called", function () {
+      var youtube,
+          youtubePlayer,
+          $holder = $("<span />"),
+          onReadyStub = jasmine.createSpy("onReadyStub");
+
+      createWrapperDiv();
+      youtubePlayer = new YoutubePlayer(defaultConfig);
+      youtube = new YoutubeDecorator(youtubePlayer);
+      youtube.onPlayerReady(onReadyStub);
+
+      youtube.init($holder);
+
+      waitsFor(function() {
+        return onReadyStub.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        // check this call was sent the event object
+        expect(onReadyStub).toHaveBeenCalled();
+        cleanUpYoutubeDOM();
+      });
+    });
+
+    it("should call the YoutubePlayer.onPlayerStateChange with the correct state", function () {
+      var youtube,
+          youtubePlayer,
+          $holder = $("<span />");
+
+      // These states are taken directly from the YT API docs.
+      // Link: https://developers.google.com/youtube/js_api_reference
+      var state = {
+        'ended': 0,
+        'paused': 2,
+        'playing': 1,
+        'unstarted': -1
+      }
+
+      createWrapperDiv();
+      spyOn(YoutubePlayer.prototype, "onPlayerReady");
+      spyOn(YoutubePlayer.prototype, "onPlayerStateChange");
+      youtubePlayer = new YoutubePlayer(defaultConfig);
+      youtube = new YoutubeDecorator(youtubePlayer);
+      youtube.init($holder);
+
+      waitsFor(function() {
+        return YoutubePlayer.prototype.onPlayerReady.callCount > 0;
+      }, "onPlayerReady function called", 10e3);
+
+      runs(function () {
+        expect(YoutubePlayer.prototype.onPlayerStateChange).toHaveBeenCalled();
+        expect(YoutubePlayer.prototype.onPlayerStateChange.mostRecentCall.args[0]).toBe(state.unstarted);
         cleanUpYoutubeDOM();
       });
     });
@@ -170,14 +225,6 @@ describe("Youtube Player", function() {
       cleanUpYoutubeDOM();
     });
 
-    it("should call onPlayerStateChange method when a video plays", function () {
-      spyOn(youtube, 'onPlayerStateChange');
-      youtube.play();
-      expect(youtube.onPlayerStateChange).toHaveBeenCalled();
-      expect(youtube.onPlayerStateChange.mostRecentCall.args[0]).toEqual(state.playing);
-      cleanUpYoutubeDOM();
-    });
-
     it("should call setSliderTimeout method when a video plays", function () {
       youtube.play();
       expect(youtube.setSliderTimeout).toHaveBeenCalled();
@@ -193,14 +240,6 @@ describe("Youtube Player", function() {
     it("should call clearSliderTimeout method when a video paused", function () {
       youtube.pause();
       expect(youtube.clearSliderTimeout).toHaveBeenCalled();
-      cleanUpYoutubeDOM();
-    });
-
-    it("should call onPlayerStateChange method when a video is paused", function () {
-      spyOn(youtube, 'onPlayerStateChange');
-      youtube.pause();
-      expect(youtube.onPlayerStateChange).toHaveBeenCalled();
-      expect(youtube.onPlayerStateChange.mostRecentCall.args[0]).toEqual(state.paused);
       cleanUpYoutubeDOM();
     });
 
