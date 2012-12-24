@@ -77,7 +77,7 @@ describe("MediaPlayerDecorator", function () {
     var decorator;
 
     beforeEach(function () {
-      decorator = new MediaplayerDecorator(player);
+      decorator = new window.nomensaPlayer.MediaplayerDecorator(player);
     });
 
     afterEach(function () {

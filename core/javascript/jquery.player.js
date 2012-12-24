@@ -914,8 +914,8 @@ var html5_methods = {
 			    };
 
                           if (config.url.match(/^http\:\/\/www\.youtube\.com/)) {
-                            youTubePlayer = new YoutubePlayer(config);
-                            player = new MediaplayerDecorator(youTubePlayer);
+                            youTubePlayer = new window.nomensaPlayer.YoutubePlayer(config);
+                            player = new window.nomensaPlayer.MediaplayerDecorator(youTubePlayer);
                             player.onPlayerReady(function () {
                               setUp(player);
                             });

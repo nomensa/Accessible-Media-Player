@@ -1,8 +1,9 @@
-window.YoutubePlayer = function (config) {
+window.nomensaPlayer = window.nomensaPlayer || {};
+window.nomensaPlayer.YoutubePlayer = function (config) {
   this.config = config;
 };
 
-window.YoutubePlayer.prototype = {
+window.nomensaPlayer.YoutubePlayer.prototype = {
   /*
    * Initialisation function to be called when instance has all required methods (post decoration)
    */
