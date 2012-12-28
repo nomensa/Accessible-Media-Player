@@ -127,7 +127,7 @@ var html5_methods = {
 		// Define the default config settings for the plugin
 		var defaults = {
 			id: 'media_player',	// The base string used for the player id.  Will end up with an integer appended to it e.g. 'ytplayer0', 'ytplayer1' etc
-			url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
+			url: window.location.protocol + '//www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
 			media: '8LiQ-bLJaM4',
 			repeat: false,	// loop the flash video true/false
                         captions: null, // caption XML URL link for caption content 
@@ -931,5 +931,50 @@ var html5_methods = {
 		/* END MAIN FUNCTION LOOP */
 	
 	};
-
 }(jQuery));
+/*
+* Global function called by YouTube when player is ready
+* We use this to get a reference to the player manager.  We can retrieve 
+* The player instance from the PlayerDaemon using the playerId
+* 
+* @param playerId {string}: The id of the player object.  This is used to
+* retrieve the correct player instance from the PlayerDaemon  
+*---------------------------------------------------------------------------*/
+function onYouTubePlayerReady(playerId) {
+  var player = PlayerDaemon.getPlayer(playerId);        // This is our initial object created by the mediaplayer plugin
+  var myplayer = document.getElementById(player.config.id);     // This is a reference to the DOM element that we use as an interface through which to execute player commands
+  player.init(myplayer);        // Pass the controller to our generated player object
+}
+
+/*
+* Global function that is called on Youtube player state change
+* This is registered in the init call for the media player object (when we have a player 
+* manager instance to inject into the player object).  We use this to listen for any 
+* play commands that have not been initialised using the media player control panel
+* (e.g. if the play button within the actual flash element is activated).
+* 
+* @param state {int}: The state code for the player when this function is fired
+*   This code is set by the youtube api.  Can be one of:
+*     -> -1: Unstarted
+*     -> 0 : Ended
+*     -> 1 : Playing
+*     -> 2 : Paused
+*     -> 3 : Buffering
+*     -> 5 : Video Cued
+* 
+* @param playerId {string}: The id of the player.  We use this to access the 
+* correct player instance from the PlayerDaemon
+* 
+*---------------------------------------------------------------------------*/ 
+function playerState(state, playerId){
+  var player = PlayerDaemon.getPlayer(playerId);
+  if(state == 1){
+    player.play();
+    if(player.config.buttons.toggle){   // This seems pretty bad.  Can we not abstract this sort of logic further?
+      player.$html.find('.play').removeClass('play').addClass('pause').text('Pause');
+    }
+  }else if(player.config.repeat && (state == 0)){       // The movie has ended and the config requires the video to repeat
+    // Let's just start the movie again 
+    player.play();
+  }
+}

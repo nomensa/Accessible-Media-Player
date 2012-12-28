@@ -53,7 +53,8 @@ jQuery(function($) {
         $holder.player({
             id:'yt'+i,
             media:link,
-            captions:captionsf
+            captions:captionsf,
+            flashHeight: 350
         });
     });
 
