@@ -22,7 +22,7 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
     $holder.html(this.$html);
 
     window.onYouTubeIframeAPIReady = function () {
-      inst.player = new YT.Player(inst.config.id, {
+      inst.player = new YT.Player('player-' + inst.config.id, {
         height: inst.config.playerStyles.height,
         width: inst.config.playerStyles.width,
         videoId: inst.config.media,

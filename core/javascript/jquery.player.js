@@ -913,7 +913,7 @@ var html5_methods = {
                               PlayerDaemon.addPlayer(player);
 			    };
 
-                          if (config.url.match(/^http\:\/\/www\.youtube\.com/)) {
+                          if (config.url.match(/^(http|https)\:\/\/www\.youtube\.com/)) {
                             youTubePlayer = new window.nomensaPlayer.YoutubePlayer(config);
                             player = new window.nomensaPlayer.MediaplayerDecorator(youTubePlayer);
                             player.onPlayerReady(function () {
