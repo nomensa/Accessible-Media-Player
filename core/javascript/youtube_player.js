@@ -26,6 +26,11 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
         height: inst.config.playerStyles.height,
         width: inst.config.playerStyles.width,
         videoId: inst.config.media,
+        playerVars:{
+          controls:'0',
+          showinfo:'0',
+          origin:window.location.protocol + '//' + window.location.hostname
+        },
         events: {
           'onReady': function (event) {
             inst.onPlayerReady(event);
