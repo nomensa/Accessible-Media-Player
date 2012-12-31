@@ -1,5 +1,6 @@
 describe("MediaPlayerDecorator", function () {
-  var player;
+  var player,
+      decorator;
 
   var state = {
     'ended': 0,
@@ -37,6 +38,14 @@ describe("MediaPlayerDecorator", function () {
     swfCallback: null
   };
 
+  var sharedMethods = [ "generatePlayerContainer", "assembleHTML", "getURL", "createButton",
+                        "getFuncControls", "getVolControls", "getSliderBar", "getSlider",
+                        "setSliderTimeout", "clearSliderTimeout", "updateSlider",
+                        "updateLoaderBar", "formatTime", "updateTime", "updateVolume",
+                        "getCaptions", "toggleCaptions", "syncCaptions", "insertCaption",
+                        "getPreviousCaption", "destroyPlayerInstance", "setCaptionTimeout",
+                        "clearCaptionTimeout" ];
+
   var cleanUpYoutubeDOM = function () {
     var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0],
     wrapperDiv = document.getElementById(defaultConfig.id);
@@ -60,30 +69,26 @@ describe("MediaPlayerDecorator", function () {
 
   beforeEach(function () {
     createWrapperDiv();
-    player = jasmine.createSpyObj('youtubeAPISpy', [
-                         "playVideo", "pauseVideo", "seekTo", "mute",
-                         "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
-                         "getPlayerState", "getPlayer", "getVideoBytesLoaded",
-                         "getVideoBytesTotal", "onPlayerReady", "getDuration",
-                         "cueVideoById"
-                        ]);
+    player = jasmine.createSpyObj('player', ["play", "pause", "ffwd", "rewd", "mute",
+                          "volup", "voldwn", "getDuration", "getCurrentTime",
+                          "getBytesLoaded", "getBytesTotal", "seek", "cue", "init"]),
+    decorator = new window.nomensaPlayer.MediaplayerDecorator(player);
   });
 
   afterEach(function () {
+    var decorator = null;
     cleanUpYoutubeDOM();
   });
 
+  it("should have all the shared functions", function () {
+    var method;
+    for (var idx = 0; idx < sharedMethods.length; idx++) {
+      method = sharedMethods[idx];
+      expect(decorator[method]).toBeDefined();
+    }
+  });
+
   describe("Exposing the Youtube Player", function () {
-    var decorator;
-
-    beforeEach(function () {
-      decorator = new window.nomensaPlayer.MediaplayerDecorator(player);
-    });
-
-    afterEach(function () {
-      decorator = null;
-    });
-
     it("should have all of the functions that YoutubePlayer has", function () {
       for (var method in player) {
         if (typeof player[method] === "function") {

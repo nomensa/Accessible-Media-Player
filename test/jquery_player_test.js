@@ -104,6 +104,7 @@ describe("jquery.player tests (integration)", function () {
 
         expectedConfig.id = 'youtube1';
         expectedConfig.media = youtubeId;
+        expectedConfig.url = 'http://www.youtube.com/watch?v=0yIniSJIego';
       });
 
       afterEach(function () {
@@ -129,10 +130,11 @@ describe("jquery.player tests (integration)", function () {
           // Initialise the player.
           holder.player({
             id: 'youtube1',
-            media: youtubeId
+            media: youtubeId,
+            url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
           });
         });
-
+        
         it("should call the constructor", function () {
           expect(window.nomensaPlayer.YoutubePlayer).toHaveBeenCalled();
         });
@@ -163,7 +165,8 @@ describe("jquery.player tests (integration)", function () {
         // Initialise the player.
         holder.player({
           id: 'youtube1',
-          media: youtubeId
+          media: youtubeId,
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
         });
         expect(window.nomensaPlayer.MediaplayerDecorator).toHaveBeenCalled();
       });
@@ -184,7 +187,8 @@ describe("jquery.player tests (integration)", function () {
         // Initialise the player.
         holder.player({
           id: 'youtube1',
-          media: youtubeId
+          media: youtubeId,
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
         });
 
         config.id = 'youtube1';
@@ -203,7 +207,8 @@ describe("jquery.player tests (integration)", function () {
         // Initialise the player.
         holder.player({
           id: 'youtube1',
-          media: youtubeId
+          media: youtubeId,
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
         });
 
         expect(spyInst.init).toHaveBeenCalled();

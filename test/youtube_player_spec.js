@@ -199,10 +199,10 @@ describe("Youtube Player", function() {
       youtube = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
       youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
                            "playVideo", "pauseVideo", "seekTo", "mute",
-                           "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
-                           "getPlayerState", "getPlayer", "getVideoBytesLoaded",
-                           "getVideoBytesTotal", "onPlayerReady", "getDuration",
-                           "cueVideoById" 
+                           "unMute", "isMuted", "setVolume", "getVolume",
+                           "getCurrentTime", "getPlayerState", "getPlayer",
+                           "getVideoBytesLoaded", "getVideoBytesTotal",
+                           "onPlayerReady", "getDuration", "cueVideoById" 
                           ]);
       youtube.player = youtubeAPISpy;
       youtube.setSliderTimeout = jasmine.createSpy("setSliderTimeout");
@@ -337,25 +337,32 @@ describe("Youtube Player", function() {
     });
 
     it("should move the volume down by the correct amount", function () {
+      var newVolume = 50 - youtube.config.volumeStep;
+      youtube.updateVolume = jasmine.createSpy("updateVolume");
       youtube.player.getVolume = function () { return 50; };
 
       youtube.voldwn();
       expect(youtube.player.setVolume).toHaveBeenCalled();
-      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(50 - youtube.config.volumeStep);
+      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(newVolume);
+      expect(youtube.updateVolume.mostRecentCall.args[0]).toEqual(newVolume);
       cleanUpYoutubeDOM();
     });
 
     it("should move the volume up by the correct amount", function () {
+      var newVolume = 50 + youtube.config.volumeStep;
       youtube.player.getVolume = function () { return 50; };
+      youtube.updateVolume = jasmine.createSpy("updateVolume");
 
       youtube.volup();
       expect(youtube.player.setVolume).toHaveBeenCalled();
-      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(50 + youtube.config.volumeStep);
+      expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(newVolume);
+      expect(youtube.updateVolume.mostRecentCall.args[0]).toEqual(newVolume);
       cleanUpYoutubeDOM();
     });
 
     it("should not move the volume up if at maximum", function () {
       youtube.player.getVolume = function () { return 100; };
+      youtube.updateVolume = jasmine.createSpy("updateVolume");
 
       youtube.volup();
       expect(youtube.player.setVolume).toHaveBeenCalled();
@@ -365,6 +372,7 @@ describe("Youtube Player", function() {
 
     it("should not move the volume down if at 0", function () {
       youtube.player.getVolume = function () { return 0; };
+      youtube.updateVolume = jasmine.createSpy("updateVolume");
 
       youtube.voldwn();
       expect(youtube.player.setVolume).toHaveBeenCalled();

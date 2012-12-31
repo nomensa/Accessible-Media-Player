@@ -160,12 +160,24 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
     }
   },
   volup: function () {
-    var currentVolume = this.player.getVolume();
-    this.player.setVolume(currentVolume >= 100 ? 100 : currentVolume + this.config.volumeStep);
+    var vol = this.player.getVolume();
+    if (vol >= 100) {
+      vol = 100;
+    } else {
+      vol = vol + this.config.volumeStep;
+    }
+    this.player.setVolume(vol);
+    this.updateVolume(vol);
   },
   voldwn: function () {
-    var currentVolume = this.player.getVolume();
-    this.player.setVolume(currentVolume <= 0 ? 0 : currentVolume - this.config.volumeStep);
+    var vol = this.player.getVolume();
+    if (vol <= 0) {
+      vol = 0;
+    } else {
+      vol = vol - this.config.volumeStep;
+    }
+    this.player.setVolume(vol);
+    this.updateVolume(vol);
   },
   getDuration: function () {
     return this.player.getDuration();
