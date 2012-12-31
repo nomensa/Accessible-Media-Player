@@ -9,38 +9,76 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
    */
   init : function ($holder) {
     var tag = document.createElement('script'),
-    firstScriptTag = document.getElementsByTagName('script')[0],
-    inst = this;
+        firstScriptTag = document.getElementsByTagName('script')[0],
+        inst = this;
 
-    tag.src = "//www.youtube.com/iframe_api";
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    this.$html = this.assembleHTML();
-
-    if(this.config.captions){
-      this.getCaptions();
-    }
-    $holder.html(this.$html);
-
-    window.onYouTubeIframeAPIReady = function () {
-      inst.player = new YT.Player('player-' + inst.config.id, {
-        height: inst.config.playerStyles.height,
-        width: inst.config.playerStyles.width,
-        videoId: inst.config.media,
-        playerVars:{
-          controls:'0',
-          showinfo:'0',
-          origin:window.location.protocol + '//' + window.location.hostname
-        },
-        events: {
-          'onReady': function (event) {
-            inst.onPlayerReady(event);
+    if (typeof window.postMessage !== 'undefined') { // iFrame requires window.postMessage
+      window.onYouTubeIframeAPIReady = function () {
+        inst.player = new YT.Player('player-' + inst.config.id, {
+          height: inst.config.playerStyles.height,
+          width: inst.config.playerStyles.width,
+          videoId: inst.config.media,
+          playerVars:{
+            controls:'0',
+            showinfo:'0',
+            origin:window.location.protocol + '//' + window.location.hostname
           },
-          'onStateChange': function (event) {
-            inst.onPlayerStateChange(event.data);
+          events: {
+            'onReady': function (event) {
+              // loaded player's id should match that in config, as with mediaplayer
+              inst.$html.find("iframe").attr("id", inst.config.id);
+
+              inst.onPlayerReady(event);
+            },
+            'onStateChange': function (event) {
+              inst.onPlayerStateChange(event.data);
+            }
           }
-        }
-      });
-    };
+        });
+      };
+
+      tag.src = "//www.youtube.com/iframe_api";
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      this.$html = this.assembleHTML();
+
+      if(this.config.captions){
+        this.getCaptions();
+      }
+      $holder.html(this.$html);
+    } else {
+      /*
+      * Global function called by YouTube when player is ready
+      * We use this to get a reference to the player manager.  We can retrieve 
+      * The player instance from the PlayerDaemon using the playerId
+      * 
+      * @param playerId {string}: The id of the player object.  This is used to
+      * retrieve the correct player instance from the PlayerDaemon  
+      *---------------------------------------------------------------------------*/
+      window.onYouTubePlayerReady = function (playerId) {
+        var player = PlayerDaemon.getPlayer(playerId);        // This is our initial object created by the mediaplayer plugin
+        var myplayer = document.getElementById(player.config.id);     // This is a reference to the DOM element that we use as an interface through which to execute player commands
+        inst.player = myplayer;        // Pass the controller to our generated player object
+        inst.cue();
+        /* 
+        * Add our player specific event listeners
+        * This one listens for the onStateChange event and calls the 
+        * playerState function at the bottom of this document
+        *---------------------------------------------------------*/
+        inst.player.addEventListener("onStateChange", function (state) { inst.onPlayerStateChange(state); });
+        inst.onPlayerReady();
+      };
+
+      this.$html = this.assembleHTML();
+
+      if(this.config.captions){
+        this.getCaptions();
+      }
+      $holder.html(this.$html);
+
+      // Add the player to the PlayerDaemon
+      PlayerDaemon.addPlayer(this);
+    }
   },
   state : {
     "ended": 0,
@@ -97,13 +135,86 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
       this.play();
     }
   },
-  generateVideoPlayer : function($playerContainer){
-    var $video = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id);
-    /* Create our video container */
-    var $videoContainer = $('<span />').addClass('video');
+  /*
+  * Get an object containing some flashvars
+  * @return {obj}: A map of flashvariables
+  *---------------------------------------------------------*/
+  getFlashVars : function(){
+    var flashvars = {
+      controlbar: 'none',
+    file: this.config.media
+    };
+    // Add extra properties to flashvars if they exist in the config
+    if(this.config.image != '') { flashvars.image = this.config.image; }
+    if(this.config.repeat) { flashvars.repeat = this.config.repeat; }
+    return flashvars;
+  },
+  /*
+  * Get an object containing some parameters for the flash movie
+  * @return {obj}: A map of flash parameters
+  *---------------------------------------------------------*/
+  getFlashParams : function(){
+    return {
+      allowScriptAccess: "always",
+      wmode: 'transparent'
+    };
+  },
+  /*
+   * Method for generating the flash component 
+   * for the media player
+   * @return {obj}: A jQuery wrapped set
+   *---------------------------------------------------------*/
+  generateFlashPlayer : function($playerContainer){
+      var $self = this;
+      /* Get our flash vars */
+      var flashvars = this.getFlashVars();
+      /* Create some parameters for the flash */
+      var params = this.getFlashParams();
+      /* Create some attributes for the flash */
+      var atts = {                                                
+        id: this.config.id,
+        name: this.config.id
+      };
+      /* Create our flash container with default content telling
+       * the user to download flash if it is not installed 
+      */
+      var $container = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id).addClass('flashReplace').html('This content requires Macromedia Flash Player. You can <a href="http://get.adobe.com/flashplayer/">install or upgrade the Adobe Flash Player here</a>.');
+      /* Create our video container */                                var $videoContainer = $('<span />').addClass('video');
+      /* Get the url for the player */
+      var url = this.getURL();
+      /********************************************************************************************************
+       *  set a timeout of 0, which seems to be enough to give IE time to update its
+       *  DOM. Strangest manifested bug on the planet. Details on how it manifested itself
+       *  in a project are below:
+       *  - IE breaks flash loading if the img src is external (ie, begins with http://+ any single character)*
+       *      AND
+       *  - If the src is internal AND the content has an <li></li> in a <ul> 
+       ********************************************************************************************************/
+      // This is where we embed our swf using swfobject
+      setTimeout(function() {
+        swfobject.embedSWF(url,
+                        $container.attr('id'), $self.config.flashWidth,
+                        $self.config.flashHeight, "9.0.115", null, flashvars, params, atts, $self.config.swfCallback);
+        // Dirty hack to remove element from tab index for versions of firefox that trap focus in flash
+        if($.browser.mozilla && ( parseInt($.browser.version, 10) >= 2)){
+          $self.$html.find('object').attr("tabindex", '-1');
+        }
+    }, 0);
     // Create our entire player container
-    $playerContainer.append($videoContainer.append($video));
+    $playerContainer.append($videoContainer.append($container));
     return $playerContainer;
+  },
+  generateVideoPlayer : function($playerContainer){
+    if (typeof window.postMessage === 'undefined') {
+      return this.generateFlashPlayer($playerContainer);
+    } else {
+      var $video = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id);
+      /* Create our video container */
+      var $videoContainer = $('<span />').addClass('video');
+      // Create our entire player container
+      $playerContainer.append($videoContainer.append($video));
+      return $playerContainer;
+    }
   },
   getPlayer: function () {
     return this.player;

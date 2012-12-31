@@ -387,6 +387,35 @@ describe("Youtube Player", function() {
     });
   });
 
+  describe("Which YouTube API is called depends on window.postMessage", function () {
+    var youtube,
+        youtubePlayer,
+        $holder;
+
+    beforeEach(function () {
+      youtubePlayer = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
+      youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+      $holder = $("<span />");
+    });
+
+    afterEach(function () {
+      youtubePlayer = null;
+      youtube = null;
+      $holder = null;
+    });
+
+    it("should call window.onYouTubePlayerReady if window.postMessage is not set", function () {
+      window.postMessage = undefined;
+      youtube.init($holder);
+      expect(window.onYoutubePlayerReady).toBeDefined();
+    });
+
+    it("should call window.onYouTubeIframeAPIReady if window.postMessage is not set", function () {
+      youtube.init($holder);
+      expect(window.onYouTubeIframeAPIReady).toBeDefined();
+    });
+  });
+
   describe("When a video is accompanied by captions", function () {
     var youtube,
         youtubePlayer;
@@ -421,6 +450,7 @@ describe("Youtube Player", function() {
 
     afterEach(function () {
       youtube = null;
+      youtubePlayer = null;
     });
 
     it("should add call the getCaptions method", function () {
