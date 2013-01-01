@@ -1,7 +1,6 @@
 window.nomensaPlayer = window.nomensaPlayer || {};
 window.nomensaPlayer.MediaplayerDecorator = function (mediaplayer) {
-  var player = mediaplayer,
-      inst = this;
+  var player = mediaplayer;
 
   /**
    * The current 'mediaplayer' object requires all of the functions
@@ -18,7 +17,7 @@ window.nomensaPlayer.MediaplayerDecorator = function (mediaplayer) {
     if (typeof player[method] === "function") {
       this[method] = (function (mthd) {
         return function () {
-          return player[mthd].apply(inst, arguments);
+          return player[mthd].apply(this, arguments);
         };
       }(method));
     }

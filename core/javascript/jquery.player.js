@@ -1,3 +1,4 @@
+window.nomensaPlayer = window.nomensaPlayer || {};
 /**
 *    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.  
 *    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar 
@@ -37,9 +38,9 @@ jQuery(function($) {
 /*
 * Global object used for managing all the players on our page
 * Use the getPlayer, addPlayer and removePlayer methods for 
-* modifying the players within the PlayerManager
+* modifying the players within the window.nomensaPlayer.PlayerManager
 *---------------------------------------------------------*/
-var PlayerManager = function(){
+window.nomensaPlayer.PlayerManager = function(){
 	//This is where we will store all of our player instances
 	var players = {};	
 	/*
@@ -55,7 +56,7 @@ var PlayerManager = function(){
 	};
 	/*
 	* Use this method for adding a player to the player list
-	* @param player {object}: The player object that we want to add to our PlayerManagers players list
+	* @param player {object}: The player object that we want to add to our window.nomensaPlayer.PlayerManagers players list
 	* @return {bool}: True if the player was added to the list, false if it already exists within the list
 	*---------------------------------------------------------*/
 	this.addPlayer = function(player){
@@ -72,13 +73,22 @@ var PlayerManager = function(){
 			delete players[playerID];
 		}
 	};
+	/*
+	* Use this method to call a function against each member of the player list
+	*---------------------------------------------------------*/
+	this.map = function(func){
+          var player;
+          for(player in players) {
+            func(players[player]);
+          }
+        };
 };
 
 /*
-* Create a new instance of our PlayerManager object 
+* Create a new instance of our window.nomensaPlayer.PlayerManager object 
 * See object above for info on how this works
 *----------------------------------------------------*/
-var PlayerDaemon = new PlayerManager();
+window.nomensaPlayer.PlayerDaemon = new window.nomensaPlayer.PlayerManager();
 
 /*
 * Methods for and HTML5 video player.  These should be browser and implementation inspecific. 
@@ -896,6 +906,7 @@ var html5_methods = {
                             player = new window.nomensaPlayer.MediaplayerDecorator(youTubePlayer);
                             player.onPlayerReady(function () {
                               setUp(player);
+                              this.getPlayer().setLoop(true);
                             });
                             player.init($self);
                           } else {
@@ -905,8 +916,8 @@ var html5_methods = {
                             $self.html(player.$html);
                             setUp(player);
                             
-                            // Add the player to the PlayerDaemon
-                            PlayerDaemon.addPlayer(player);
+                            // Add the player to the window.nomensaPlayer.PlayerDaemon
+                            window.nomensaPlayer.PlayerDaemon.addPlayer(player);
                           }
 		});
 		/* END MAIN FUNCTION LOOP */

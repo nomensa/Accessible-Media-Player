@@ -1,28 +1,26 @@
 window.nomensaPlayer = window.nomensaPlayer || {};
 window.nomensaPlayer.YoutubePlayer = function (config) {
   this.config = config;
+  this.config.playerVars = {
+    controls:0,
+    showinfo:0,
+    origin:window.location.protocol + '//' + window.location.hostname,
+    rel:0
+  };
 };
+/* 
+* Static Boolean property to mark if YouTube API is loaded
+* Only relevant to Iframe API
+*---------------------------------------------------------*/
+window.nomensaPlayer.YoutubePlayer.apiLoaded = false;
 
 window.nomensaPlayer.YoutubePlayer.prototype = {
-  /*
-   * Initialisation function to be called when instance has all required methods (post decoration)
-   */
-  init : function ($holder) {
-    var tag = document.createElement('script'),
-        firstScriptTag = document.getElementsByTagName('script')[0],
-        inst = this;
-
-    if (typeof window.postMessage !== 'undefined') { // iFrame requires window.postMessage
-      window.onYouTubeIframeAPIReady = function () {
-        inst.player = new YT.Player('player-' + inst.config.id, {
-          height: inst.config.playerStyles.height,
-          width: inst.config.playerStyles.width,
-          videoId: inst.config.media,
-          playerVars:{
-            controls:'0',
-            showinfo:'0',
-            origin:window.location.protocol + '//' + window.location.hostname
-          },
+  getYTOptions : function () {
+    var inst = this,
+        options = {
+          height: this.config.flashHeight,
+          width: this.config.flashWidth,
+          videoId: this.config.media,
           events: {
             'onReady': function (event) {
               // loaded player's id should match that in config, as with mediaplayer
@@ -34,52 +32,93 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
               inst.onPlayerStateChange(event.data);
             }
           }
-        });
-      };
+        };
 
-      tag.src = "//www.youtube.com/iframe_api";
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    options.playerVars = this.config.playerVars;
 
-      this.$html = this.assembleHTML();
-
-      if(this.config.captions){
-        this.getCaptions();
-      }
-      $holder.html(this.$html);
-    } else {
-      /*
-      * Global function called by YouTube when player is ready
-      * We use this to get a reference to the player manager.  We can retrieve 
-      * The player instance from the PlayerDaemon using the playerId
-      * 
-      * @param playerId {string}: The id of the player object.  This is used to
-      * retrieve the correct player instance from the PlayerDaemon  
-      *---------------------------------------------------------------------------*/
-      window.onYouTubePlayerReady = function (playerId) {
-        var player = PlayerDaemon.getPlayer(playerId);        // This is our initial object created by the mediaplayer plugin
-        var myplayer = document.getElementById(player.config.id);     // This is a reference to the DOM element that we use as an interface through which to execute player commands
-        inst.player = myplayer;        // Pass the controller to our generated player object
-        inst.cue();
-        /* 
-        * Add our player specific event listeners
-        * This one listens for the onStateChange event and calls the 
-        * playerState function at the bottom of this document
-        *---------------------------------------------------------*/
-        inst.player.addEventListener("onStateChange", function (state) { inst.onPlayerStateChange(state); });
-        inst.onPlayerReady();
-      };
-
-      this.$html = this.assembleHTML();
-
-      if(this.config.captions){
-        this.getCaptions();
-      }
-      $holder.html(this.$html);
-
-      // Add the player to the PlayerDaemon
-      PlayerDaemon.addPlayer(this);
+    if (this.config.repeat) {
+      options.playerVars.playlist = this.config.media;
     }
+
+    return options;
   },
+  /*
+   * Initialisation function to be called when instance has all required methods (post decoration)
+   * The final init function is decided by an initial test for window.postMessage.
+   */
+  init : function () {
+    if (typeof window.postMessage !== 'undefined') { // iFrame requires window.postMessage
+      return function ($holder) {
+        var tag = document.createElement('script'),
+            firstScriptTag = document.getElementsByTagName('script')[0],
+            inst = this;
+
+        this.$html = this.assembleHTML();
+
+        if(this.config.captions){
+          this.getCaptions();
+        }
+        $holder.html(this.$html);
+
+        // Add the player to the window.nomensaPlayer.PlayerDaemon
+        window.nomensaPlayer.PlayerDaemon.addPlayer(this);
+
+        // if API has not loaded, use playerDaemon to store players
+        if (!window.nomensaPlayer.YoutubePlayer.apiLoaded) {
+          // API callback will initiate all stored players
+          if (typeof window.onYouTubeIframeAPIReady === 'undefined') {
+            window.onYouTubeIframeAPIReady = function () {
+              window.nomensaPlayer.PlayerDaemon.map(function (player) {
+                if (typeof player.getYTOptions !== 'undefined') {
+                  player.player = new YT.Player('player-' + player.config.id, player.getYTOptions());
+                }
+              });
+              window.nomensaPlayer.YoutubePlayer.apiLoaded = true;
+            };
+            tag.src = "//www.youtube.com/iframe_api";
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          }
+        } else {
+          this.player = YT.Player('player-' + player.config.id, getOptions(player));
+        }
+      };
+    } else {
+      return function ($holder) {
+        var inst = this;
+
+        this.$html = this.assembleHTML();
+
+        if(this.config.captions){
+          this.getCaptions();
+        }
+        $holder.html(this.$html);
+
+        // Add the player to the window.nomensaPlayer.PlayerDaemon
+        window.nomensaPlayer.PlayerDaemon.addPlayer(this);
+        /*
+        * Global function called by YouTube when player is ready
+        * We use this to get a reference to the player manager.  We can retrieve 
+        * The player instance from the window.nomensaPlayer.PlayerDaemon using the playerId
+        * 
+        * @param playerId {string}: The id of the player object.  This is used to
+        * retrieve the correct player instance from the window.nomensaPlayer.PlayerDaemon  
+        *---------------------------------------------------------------------------*/
+        window.onYouTubePlayerReady = function (playerId) {
+          var player = window.nomensaPlayer.PlayerDaemon.getPlayer(playerId);        // This is our initial object created by the mediaplayer plugin
+          var myplayer = document.getElementById(player.config.id);     // This is a reference to the DOM element that we use as an interface through which to execute player commands
+          player.player = myplayer;        // Pass the controller to our generated player object
+          player.cue();
+          /* 
+          * Add our player specific event listeners
+          * This one listens for the onStateChange event and calls the 
+          * playerState function at the bottom of this document
+          *---------------------------------------------------------*/
+          player.getPlayer().addEventListener("onStateChange", function (state) { inst.onPlayerStateChange(state); });
+          player.onPlayerReady();
+        };
+      };
+    }
+  }(),
   state : {
     "ended": 0,
     "playing": 1,
