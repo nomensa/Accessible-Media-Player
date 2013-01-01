@@ -182,6 +182,46 @@ describe("Youtube Player", function() {
     });
   });
 
+  describe("YoutubePlayer.getYTOptions method", function () {
+    var youtube;
+
+    afterEach(function () {
+      youtube = null;
+    });
+
+    it("should return the correct options", function () {
+      var options,
+          config = {
+        flashHeight : 100,
+        flashWidth : 200,
+        media : "test1",
+        repeat : 0
+      };
+
+      youtube = new window.nomensaPlayer.YoutubePlayer(config); 
+      options = youtube.getYTOptions();
+      expect(options.height).toBe(100);
+      expect(options.width).toBe(200);
+      expect(options.videoId).toBe("test1");
+      expect(options.playerVars.playlist).not.toBeDefined();
+    });
+
+    it("should return the correct options when repeat is set", function () {
+      var options,
+          config = {
+        flashHeight : 100,
+        flashWidth : 200,
+        media : "test1",
+        repeat : 1
+      };
+
+      youtube = new window.nomensaPlayer.YoutubePlayer(config); 
+      options = youtube.getYTOptions();
+      expect(options.playerVars.playlist).toBeDefined();
+      expect(options.playerVars.playlist).toBe("test1");
+    });
+  });
+
   describe("Interacting with videos", function () {
     var youtube;
 
