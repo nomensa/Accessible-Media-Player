@@ -105,8 +105,8 @@ window.nomensaPlayer.PlayerDaemon = new window.nomensaPlayer.PlayerManager();
 var html5_methods = {
 		play : function(){this.player.play();this.setSliderTimeout();if(this.config.captionsOn && this.captions){this.setCaptionTimeout();}},
 		pause : function(){this.player.pause();this.clearSliderTimeout();if(this.config.captionsOn && this.captions){this.clearCaptionTimeout();}},
-		ffwd : function(){var time = this.getCurrentTime() + this.config.player_skip;this.seek(time);},
-		rewd : function(){var time = this.getCurrentTime() - this.config.player_skip;if(time < 0){time = 0;}this.seek(time);},
+		ffwd : function(){var time = this.getCurrentTime() + this.config.playerSkip;this.seek(time);},
+		rewd : function(){var time = this.getCurrentTime() - this.config.playerSkip;if(time < 0){time = 0;}this.seek(time);},
 		mute : function(){var $button = this.$html.find('button.mute');if(this.player.muted){this.player.muted = false;if($button.hasClass('muted')){$button.removeClass('muted');}}else{this.player.muted = true;$button.addClass('muted');}},
 		volup : function(){var vol = this.player.volume * 100;if(vol < (100 - this.config.volumeStep)){vol += this.config.volumeStep;}else{vol = 100;}this.player.volume = (vol/100);this.updateVolume(Math.round(vol));},
 		voldwn : function(){var vol = this.player.volume * 100;if(vol > this.config.volumeStep){vol -= this.config.volumeStep;}else{vol = 0;}this.player.volume = (vol/100);this.updateVolume(Math.round(vol));},
