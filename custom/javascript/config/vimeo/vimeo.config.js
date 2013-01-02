@@ -59,8 +59,8 @@ var vimeoconfig = {
 	getBytesLoaded : function(){if(this.bytesLoaded){return this.bytesLoaded;}else{return 0;}},
 	getBytesTotal : function(){if(this.bytesTotal){return this.bytesTotal;}else{return 0;}},	// The getBuffer() call (above) returns the buffered value as a percentage.  Therefore total bytes is 100
 	seek : function(time){this.player.api_seekTo(time);if(this.config.captionsOn && this.captions){this.$html.find('.caption').remove();this.clearCaptionTimeout();this.getPreviousCaption(time);this.setCaptionTimeout();}},
-	volup : function(){var vol = parseInt((this.player.api_getVolume() * 100), 10);if(vol < (100 - this.config.volume_step)){vol += this.config.volume_step;}else{vol = 100;}this.updateVolume(vol);vol = vol/100;this.player.api_setVolume(vol);},
-	voldwn : function(){var vol = parseInt((this.player.api_getVolume() * 100), 10);if(vol > (this.config.volume_step)){vol -= this.config.volume_step;}else{vol = 0;}this.updateVolume(vol);vol = vol/100;this.player.api_setVolume(vol);},
+	volup : function(){var vol = parseInt((this.player.api_getVolume() * 100), 10);if(vol < (100 - this.config.volumeStep)){vol += this.config.volumeStep;}else{vol = 100;}this.updateVolume(vol);vol = vol/100;this.player.api_setVolume(vol);},
+	voldwn : function(){var vol = parseInt((this.player.api_getVolume() * 100), 10);if(vol > (this.config.volumeStep)){vol -= this.config.volumeStep;}else{vol = 0;}this.updateVolume(vol);vol = vol/100;this.player.api_setVolume(vol);},
 	cue : function(){return;}
 };
 
