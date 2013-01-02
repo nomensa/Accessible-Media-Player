@@ -68,10 +68,10 @@ var vimeoconfig = {
 * Event listener for when the vimeo player has loaded.  This is used to initialise the player
 * and merge the player interface into the player object
 * @param player_id {string}: The id of the flash player (used for retrieving the player from the 
-* PlayerDaemon and getting a reference to the object instance from the DOM).
+* window.nomensaPlayer.PlayerDaemon and getting a reference to the object instance from the DOM).
 *-------------------------------------------------------------------------------------------*/
 function vimeo_player_loaded(player_id){
-	var player = PlayerDaemon.getPlayer(player_id);
+	var player = window.nomensaPlayer.PlayerDaemon.getPlayer(player_id);
 	var myplayer = document.getElementById(player_id);
 	player.init(myplayer);
 }
@@ -84,7 +84,7 @@ function vimeo_player_loaded(player_id){
 * @param player_id {string}: The id of the player
 *-------------------------------------------------------------------------------------------*/
 function vimeo_player_loadProgress(args, player_id){
-	var player = PlayerDaemon.getPlayer(player_id);
+	var player = window.nomensaPlayer.PlayerDaemon.getPlayer(player_id);
 	player.bytesLoaded = args.bytesLoaded;
 	player.bytesTotal = args.bytesTotal;
 }
@@ -95,7 +95,7 @@ function vimeo_player_loadProgress(args, player_id){
 * @param player_id {string}: the id of the player
 *-------------------------------------------------------------------------------------------*/
 function vimeo_player_play(player_id){
-	var player = PlayerDaemon.getPlayer(player_id);
+	var player = window.nomensaPlayer.PlayerDaemon.getPlayer(player_id);
 	player.setSliderTimeout();
 	if(player.config.buttons.toggle){	// This seems pretty bad.  Can we not abstract this sort of logic further?
 		player.$html.find('.play').removeClass('play').addClass('pause').text('Pause');
@@ -112,7 +112,7 @@ function vimeo_player_play(player_id){
 * @param player_id {string}: the id of the player
 *-------------------------------------------------------------------------------------------*/
 function vimeo_player_pause(player_id){
-	var player = PlayerDaemon.getPlayer(player_id);
+	var player = window.nomensaPlayer.PlayerDaemon.getPlayer(player_id);
 	player.clearSliderTimeout();
 	if(player.config.buttons.toggle){	// This seems pretty bad.  Can we not abstract this sort of logic further?
 		player.$html.find('.pause').removeClass('pause').addClass('play').text('Play');
