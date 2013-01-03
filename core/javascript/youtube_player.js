@@ -95,6 +95,10 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
 
         // Add the player to the window.nomensaPlayer.PlayerDaemon
         window.nomensaPlayer.PlayerDaemon.addPlayer(this);
+        window.nomensaPlayer.stateHandlers[this.config.id] = function (state) {
+          var player = window.nomensaPlayer.PlayerDaemon.getPlayer(inst.config.id);
+          player.onPlayerStateChange(state);
+        };
         /*
         * Global function called by YouTube when player is ready
         * We use this to get a reference to the player manager.  We can retrieve 
@@ -113,7 +117,7 @@ window.nomensaPlayer.YoutubePlayer.prototype = {
           * This one listens for the onStateChange event and calls the 
           * playerState function at the bottom of this document
           *---------------------------------------------------------*/
-          player.getPlayer().addEventListener("onStateChange", function (state) { inst.onPlayerStateChange(state); });
+          player.getPlayer().addEventListener("onStateChange", "window.nomensaPlayer.stateHandlers." + inst.config.id);
           player.onPlayerReady();
         };
       };

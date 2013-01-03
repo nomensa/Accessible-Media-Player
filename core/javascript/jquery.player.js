@@ -36,6 +36,16 @@ jQuery(function($) {
 });
 
 /*
+* Global object used to hold functions for calling player's
+* onPlayerStateChange methods.
+* The Youtube AS3 API only allows the callback to be named,
+* not sent in, so we add a function to this object linked to
+* to each player's id
+*/ 
+if (typeof window.postMessage === "undefined") {
+  window.nomensaPlayer.stateHandlers = {};
+}
+/*
 * Global object used for managing all the players on our page
 * Use the getPlayer, addPlayer and removePlayer methods for 
 * modifying the players within the window.nomensaPlayer.PlayerManager
