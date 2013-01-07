@@ -1,13 +1,13 @@
-window.nomensaPlayer = window.nomensaPlayer || {};
-describe("window.nomensaPlayer.PlayerManager", function () {
+window.NOMENSA.player = window.NOMENSA.player || {};
+describe("window.NOMENSA.player.PlayerManager", function () {
   var manager;
 
   beforeEach(function () {
-    manager = new window.nomensaPlayer.PlayerManager();
+    manager = new window.NOMENSA.player.PlayerManager();
   });
 
-  it("should have window.nomensaPlayer.PlayerManager defined", function () {
-    expect(window.nomensaPlayer.PlayerManager).toBeDefined();
+  it("should have window.NOMENSA.player.PlayerManager defined", function () {
+    expect(window.NOMENSA.player.PlayerManager).toBeDefined();
   });
 
   it("should not have an unknown player", function () {

@@ -72,7 +72,7 @@ describe("MediaPlayerDecorator", function () {
     player = jasmine.createSpyObj('player', ["play", "pause", "ffwd", "rewd", "mute",
                           "volup", "voldwn", "getDuration", "getCurrentTime",
                           "getBytesLoaded", "getBytesTotal", "seek", "cue", "init"]),
-    decorator = new window.nomensaPlayer.MediaplayerDecorator(player);
+    decorator = new window.NOMENSA.player.MediaplayerDecorator(player);
   });
 
   afterEach(function () {

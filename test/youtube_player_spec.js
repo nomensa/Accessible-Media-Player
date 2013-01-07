@@ -55,7 +55,7 @@ describe("Youtube Player", function() {
     var youtube;
 
     beforeEach(function () {
-      youtube = new window.nomensaPlayer.YoutubePlayer({});
+      youtube = new window.NOMENSA.player.YoutubePlayer({});
     });
 
     afterEach(function () {
@@ -95,8 +95,8 @@ describe("Youtube Player", function() {
           $holder = $("<span />");
 
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(0);
-      youtubePlayer = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
-      youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+      youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
+      youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
       youtube.init($holder);
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(1);
 
@@ -116,8 +116,8 @@ describe("Youtube Player", function() {
 
         createWrapperDiv();
         $("wrapper").append($holder);
-        youtubePlayer = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
-        youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+        youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
+        youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
         result = youtube.onPlayerReady(eventStub);
 
         expect(result).toBe(false);
@@ -136,8 +136,8 @@ describe("Youtube Player", function() {
 
         createWrapperDiv();
         $("wrapper").append($holder);
-        youtubePlayer = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
-        youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+        youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
+        youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
         youtube.onPlayerReady(onReadyStub);
         youtube.onPlayerReady(eventStub);
         expect(onReadyStub).toHaveBeenCalled();
@@ -168,8 +168,8 @@ describe("Youtube Player", function() {
 
         createWrapperDiv();
         $("wrapper").append($holder);
-        youtubePlayer = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
-        youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+        youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
+        youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
         youtube.onPlayerReady(stubs.onReady1);
         youtube.onPlayerReady(stubs.onReady2);
         youtube.onPlayerReady(eventStub);
@@ -198,7 +198,7 @@ describe("Youtube Player", function() {
         repeat : 0
       };
 
-      youtube = new window.nomensaPlayer.YoutubePlayer(config); 
+      youtube = new window.NOMENSA.player.YoutubePlayer(config); 
       options = youtube.getYTOptions();
       expect(options.height).toBe(100);
       expect(options.width).toBe(200);
@@ -215,7 +215,7 @@ describe("Youtube Player", function() {
         repeat : 1
       };
 
-      youtube = new window.nomensaPlayer.YoutubePlayer(config); 
+      youtube = new window.NOMENSA.player.YoutubePlayer(config); 
       options = youtube.getYTOptions();
       expect(options.playerVars.playlist).toBeDefined();
       expect(options.playerVars.playlist).toBe("test1");
@@ -236,7 +236,7 @@ describe("Youtube Player", function() {
 
     beforeEach(function () {
       createWrapperDiv();
-      youtube = new window.nomensaPlayer.YoutubePlayer(defaultConfig);
+      youtube = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
       youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
                            "playVideo", "pauseVideo", "seekTo", "mute",
                            "unMute", "isMuted", "setVolume", "getVolume",
@@ -433,7 +433,7 @@ describe("Youtube Player", function() {
 
     beforeEach(function () {
       var config = defaultConfig;
-          decoratorProto = window.nomensaPlayer.MediaplayerDecorator.prototype;
+          decoratorProto = window.NOMENSA.player.MediaplayerDecorator.prototype;
 
       config.captionsOn = true;
       config.captions = "/test/assets/captions-hidden-elements.xml";
@@ -446,7 +446,7 @@ describe("Youtube Player", function() {
       spyOn(decoratorProto, "setCaptionTimeout");
       spyOn(decoratorProto, "clearCaptionTimeout");
       spyOn(decoratorProto, "getPreviousCaption");
-      youtubePlayer = new window.nomensaPlayer.YoutubePlayer(config);
+      youtubePlayer = new window.NOMENSA.player.YoutubePlayer(config);
       youtubeAPISpy = jasmine.createSpyObj('youtubeAPISpy', [
                            "playVideo", "pauseVideo", "seekTo", "mute",
                            "unMute", "isMuted", "setVolume", "getVolume", "getCurrentTime",
@@ -455,7 +455,7 @@ describe("Youtube Player", function() {
                            "cueVideoById" 
                           ]);
       youtubePlayer.player = youtubeAPISpy;
-      youtube = new window.nomensaPlayer.MediaplayerDecorator(youtubePlayer);
+      youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
       youtube.init($("<span />"));
     });
 
@@ -465,7 +465,7 @@ describe("Youtube Player", function() {
     });
 
     it("should add call the getCaptions method", function () {
-      expect(window.nomensaPlayer.MediaplayerDecorator.prototype.getCaptions).toHaveBeenCalled(); 
+      expect(window.NOMENSA.player.MediaplayerDecorator.prototype.getCaptions).toHaveBeenCalled(); 
     });
 
     it("should call setCaptionTimeout method when captions are on and a video plays", function () {

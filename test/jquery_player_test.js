@@ -25,7 +25,7 @@ describe("jquery.player tests (integration)", function () {
 
     wrapper.appendChild(videoLink);
 
-    spyOn(window.nomensaPlayer, "YoutubePlayer");
+    spyOn(window.NOMENSA.player, "YoutubePlayer");
 
     holder = $("<span></span>");
     holder.append(videoLink);
@@ -38,7 +38,7 @@ describe("jquery.player tests (integration)", function () {
       url: videoLink.href
     });
 
-    expect(window.nomensaPlayer.YoutubePlayer).not.toHaveBeenCalled();
+    expect(window.NOMENSA.player.YoutubePlayer).not.toHaveBeenCalled();
 
     holder.remove();
     wrapper.appendChild(videoLink);
@@ -118,7 +118,7 @@ describe("jquery.player tests (integration)", function () {
 
       describe("Call the YoutubePlayer constructor", function () {
         beforeEach(function () {
-          spyOn(window.nomensaPlayer, "YoutubePlayer").andCallFake(function () {
+          spyOn(window.NOMENSA.player, "YoutubePlayer").andCallFake(function () {
             // methods do not need to be spys so just stub
             return {
               init : function () {},
@@ -136,24 +136,24 @@ describe("jquery.player tests (integration)", function () {
         });
         
         it("should call the constructor", function () {
-          expect(window.nomensaPlayer.YoutubePlayer).toHaveBeenCalled();
+          expect(window.NOMENSA.player.YoutubePlayer).toHaveBeenCalled();
         });
 
         it("should recieve a single argument", function () {
-          expect(window.nomensaPlayer.YoutubePlayer.calls[0].args[0]).toBeDefined();
+          expect(window.NOMENSA.player.YoutubePlayer.calls[0].args[0]).toBeDefined();
         });
 
         it("should recieve an object", function () {
-          expect(typeof window.nomensaPlayer.YoutubePlayer.calls[0].args[0] === "object").toBe(true);
+          expect(typeof window.NOMENSA.player.YoutubePlayer.calls[0].args[0] === "object").toBe(true);
         });
 
         it("should recieve the default config", function () {
-          expect(window.nomensaPlayer.YoutubePlayer.calls[0].args[0]).toEqual(expectedConfig);
+          expect(window.NOMENSA.player.YoutubePlayer.calls[0].args[0]).toEqual(expectedConfig);
         });
       });
 
       it("should call the MediaplayerDecorator constructor", function () {
-        spyOn(window.nomensaPlayer, "MediaplayerDecorator").andCallFake(function () {
+        spyOn(window.NOMENSA.player, "MediaplayerDecorator").andCallFake(function () {
           // methods do not need to be spys so just stub
           return {
             init : function () {},
@@ -168,14 +168,14 @@ describe("jquery.player tests (integration)", function () {
           media: youtubeId,
           url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
         });
-        expect(window.nomensaPlayer.MediaplayerDecorator).toHaveBeenCalled();
+        expect(window.NOMENSA.player.MediaplayerDecorator).toHaveBeenCalled();
       });
 
       it("should call the MediaplayerDecorator constructor with an instance of YoutubePlayer", function () {
         var config = defaultConfig,
             youTubePlayerCopy;
 
-        spyOn(window.nomensaPlayer, "MediaplayerDecorator").andCallFake(function () {
+        spyOn(window.NOMENSA.player, "MediaplayerDecorator").andCallFake(function () {
           // methods do not need to be spys so just stub
           return {
             init : function () {},
@@ -193,14 +193,14 @@ describe("jquery.player tests (integration)", function () {
 
         config.id = 'youtube1';
         config.media = youtubeId;
-        youTubePlayerCopy = new window.nomensaPlayer.YoutubePlayer(config);
-        expect(window.nomensaPlayer.MediaplayerDecorator.mostRecentCall.args[0]).toEqual(youTubePlayerCopy);
+        youTubePlayerCopy = new window.NOMENSA.player.YoutubePlayer(config);
+        expect(window.NOMENSA.player.MediaplayerDecorator.mostRecentCall.args[0]).toEqual(youTubePlayerCopy);
       });
 
       it("should call the init method of the returned instance", function () {
         var spyInst = jasmine.createSpyObj("spyInst", ["init", "onPlayerReady", "onPlayerChange"]);
 
-        spyOn(window.nomensaPlayer, "MediaplayerDecorator").andCallFake(function () {
+        spyOn(window.NOMENSA.player, "MediaplayerDecorator").andCallFake(function () {
           return spyInst;
         });
 
