@@ -896,10 +896,10 @@ var html5_methods = {
 		/* MAIN FUNCTION LOOP */
 		return this.each(function(i) {
 
-			var $self = $(this),
-			    youTubePlayer,
-			    player,
-			    setUp = function (player) {
+                        var $self = $(this),
+                            youTubePlayer,
+                            player,
+                            setUp = function (player) {
                                     // If the player is wider than 580 add a class of player-wide to the container
                                     if(player.$html.width()>580) {
                                             player.$html.addClass('player-wide');
@@ -910,7 +910,7 @@ var html5_methods = {
                                     if(player.is_html5){
                                             player.player = document.getElementById(player.config.id);
                                     }
-			    };
+                            };
 
                         if (config.url.match(/^(http|https)\:\/\/www\.youtube\.com/)) {
                                 youTubePlayer = new window.NOMENSA.player.YoutubePlayer(config);
@@ -931,6 +931,6 @@ var html5_methods = {
                                 window.NOMENSA.player.PlayerDaemon.addPlayer(player);
                         }
 		});
-		/* END MAIN FUNCTION LOOP */
+                /* END MAIN FUNCTION LOOP */
         };
 }(jQuery));
