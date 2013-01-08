@@ -40,6 +40,7 @@ describe("window.NOMENSA.player.PlayerManager", function () {
               id: 1
             }
           };
+
       manager.addPlayer(examplePlayer);
       manager.addPlayer(examplePlayer2);
       manager.map(function (player) {

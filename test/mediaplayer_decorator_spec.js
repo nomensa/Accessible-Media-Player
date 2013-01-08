@@ -48,16 +48,14 @@ describe("MediaPlayerDecorator", function () {
 
   var cleanUpYoutubeDOM = function () {
     var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0],
-    wrapperDiv = document.getElementById(defaultConfig.id);
+        wrapperDiv = document.getElementById(defaultConfig.id);
 
     if (apiScript) {
       document.getElementsByTagName('head')[0].removeChild(apiScript);
     }
-
     if (wrapperDiv) {
       wrapperDiv.parentNode.removeChild(wrapperDiv);
     }
-
     window.YT = null;
   }
 
@@ -77,11 +75,13 @@ describe("MediaPlayerDecorator", function () {
 
   afterEach(function () {
     var decorator = null;
+    
     cleanUpYoutubeDOM();
   });
 
   it("should have all the shared functions", function () {
     var method;
+    
     for (var idx = 0; idx < sharedMethods.length; idx++) {
       method = sharedMethods[idx];
       expect(decorator[method]).toBeDefined();

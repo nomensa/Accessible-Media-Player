@@ -1,7 +1,7 @@
 describe("Youtube Player", function() {
   var cleanUpYoutubeDOM = function () {
     var apiScripts = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']"),
-    wrapper = document.getElementById('wrapper');
+        wrapper = document.getElementById('wrapper');
 
     if (apiScripts.length) {
       var scriptsIdx = apiScripts.length,
@@ -99,7 +99,6 @@ describe("Youtube Player", function() {
       youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
       youtube.init($holder);
       expect(document.querySelectorAll("script[src='//www.youtube.com/iframe_api']").length).toBe(1);
-
       cleanUpYoutubeDOM();
     });
 
@@ -119,7 +118,6 @@ describe("Youtube Player", function() {
         youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
         youtube = new window.NOMENSA.player.MediaplayerDecorator(youtubePlayer);
         result = youtube.onPlayerReady(eventStub);
-
         expect(result).toBe(false);
         cleanUpYoutubeDOM();
       });
@@ -165,7 +163,6 @@ describe("Youtube Player", function() {
 
         spyOn(stubs, "onReady1").andCallThrough();
         spyOn(stubs, "onReady2").andCallThrough();
-
         createWrapperDiv();
         $("wrapper").append($holder);
         youtubePlayer = new window.NOMENSA.player.YoutubePlayer(defaultConfig);
@@ -345,7 +342,6 @@ describe("Youtube Player", function() {
 
     it("should move the time by +10 seconds when fast-forwarded", function () {
       youtube.player.getCurrentTime = function () { return 50; };
-
       youtube.ffwd();
       expect(youtube.player.seekTo.mostRecentCall.args[0]).toEqual(60);
       cleanUpYoutubeDOM();
@@ -353,7 +349,6 @@ describe("Youtube Player", function() {
 
     it("should move the time by -10 seconds when rewound", function () {
       youtube.player.getCurrentTime = function () { return 50; };
-
       youtube.rewd();
       expect(youtube.player.seekTo.mostRecentCall.args[0]).toEqual(40);
       cleanUpYoutubeDOM();
@@ -362,7 +357,6 @@ describe("Youtube Player", function() {
     it("should move the time by the amount specified in config.player_skip when fast-forwarded from end time", function () {
       youtube.player.getCurrentTime = function () { return 50; };
       youtube.player.getDuration = function () { return 50; };
-
       youtube.ffwd();
       expect(youtube.player.seekTo.mostRecentCall.args[0]).toEqual(50);
       cleanUpYoutubeDOM();
@@ -370,7 +364,6 @@ describe("Youtube Player", function() {
 
     it("should move the time by the amount specified in config.player_skip when rewound from start time", function () {
       youtube.player.getCurrentTime = function () { return 0; };
-
       youtube.rewd();
       expect(youtube.player.seekTo.mostRecentCall.args[0]).toEqual(0);
       cleanUpYoutubeDOM();
@@ -378,9 +371,9 @@ describe("Youtube Player", function() {
 
     it("should move the volume down by the correct amount", function () {
       var newVolume = 50 - youtube.config.volumeStep;
+      
       youtube.updateVolume = jasmine.createSpy("updateVolume");
       youtube.player.getVolume = function () { return 50; };
-
       youtube.voldwn();
       expect(youtube.player.setVolume).toHaveBeenCalled();
       expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(newVolume);
@@ -390,9 +383,9 @@ describe("Youtube Player", function() {
 
     it("should move the volume up by the correct amount", function () {
       var newVolume = 50 + youtube.config.volumeStep;
+      
       youtube.player.getVolume = function () { return 50; };
       youtube.updateVolume = jasmine.createSpy("updateVolume");
-
       youtube.volup();
       expect(youtube.player.setVolume).toHaveBeenCalled();
       expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(newVolume);
@@ -403,7 +396,6 @@ describe("Youtube Player", function() {
     it("should not move the volume up if at maximum", function () {
       youtube.player.getVolume = function () { return 100; };
       youtube.updateVolume = jasmine.createSpy("updateVolume");
-
       youtube.volup();
       expect(youtube.player.setVolume).toHaveBeenCalled();
       expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(100);
@@ -413,7 +405,6 @@ describe("Youtube Player", function() {
     it("should not move the volume down if at 0", function () {
       youtube.player.getVolume = function () { return 0; };
       youtube.updateVolume = jasmine.createSpy("updateVolume");
-
       youtube.voldwn();
       expect(youtube.player.setVolume).toHaveBeenCalled();
       expect(youtube.player.setVolume.mostRecentCall.args[0]).toEqual(0);

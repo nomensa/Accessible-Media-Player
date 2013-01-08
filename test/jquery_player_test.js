@@ -4,7 +4,6 @@ describe("jquery.player tests (integration)", function () {
   beforeEach(function () {
     wrapper = document.createElement("div");
     wrapper.id = "wrapper";
-
     document.body.appendChild(wrapper);
   });
 
@@ -22,11 +21,8 @@ describe("jquery.player tests (integration)", function () {
     videoLink = document.createElement("a");
     videoLink.href = "http://vimeo.com/36579366";
     youtubeId = videoLink.href.split("=")[1];
-
     wrapper.appendChild(videoLink);
-
     spyOn(window.NOMENSA.player, "YoutubePlayer");
-
     holder = $("<span></span>");
     holder.append(videoLink);
     $("#wrapper").append(holder);
@@ -39,7 +35,6 @@ describe("jquery.player tests (integration)", function () {
     });
 
     expect(window.NOMENSA.player.YoutubePlayer).not.toHaveBeenCalled();
-
     holder.remove();
     wrapper.appendChild(videoLink);
   });
@@ -79,9 +74,7 @@ describe("jquery.player tests (integration)", function () {
 
       videoLink = document.createElement("a");
       videoLink.href = "http://www.youtube.com/watch?v=qySFp3qnVmM";
-
       wrapper.appendChild(videoLink);
-
       youtubeId = videoLink.href.split("=")[1];
     });
 
@@ -101,7 +94,6 @@ describe("jquery.player tests (integration)", function () {
         holder = $("<span></span>");
         holder.append(videoLink);
         $("#wrapper").append(holder);
-
         expectedConfig.id = 'youtube1';
         expectedConfig.media = youtubeId;
         expectedConfig.url = 'http://www.youtube.com/watch?v=0yIniSJIego';
