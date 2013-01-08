@@ -43,10 +43,10 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
 
                 return options;
         },
-/*
-   * Initialisation function to be called when instance has all required methods (post decoration)
-   * The final init function is decided by an initial test for window.postMessage.
-*/
+        /*
+           * Initialisation function to be called when instance has all required methods (post decoration)
+           * The final init function is decided by an initial test for window.postMessage.
+        */
         init : function () {
                 if (typeof window.postMessage !== 'undefined') { // iFrame requires window.postMessage
                         return function ($holder) {
@@ -100,24 +100,24 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
                                         var player = window.NOMENSA.player.PlayerDaemon.getPlayer(inst.config.id);
                                         player.onPlayerStateChange(state);
                                 };
-/*
-        * Global function called by YouTube when player is ready
-        * We use this to get a reference to the player manager.  We can retrieve 
-        * The player instance from the window.NOMENSA.player.PlayerDaemon using the playerId
-        * 
-        * @param playerId {string}: The id of the player object.  This is used to
-        * retrieve the correct player instance from the window.NOMENSA.player.PlayerDaemon  
-        *---------------------------------------------------------------------------*/
+                                /*
+                                * Global function called by YouTube when player is ready
+                                * We use this to get a reference to the player manager.  We can retrieve 
+                                * The player instance from the window.NOMENSA.player.PlayerDaemon using the playerId
+                                * 
+                                * @param playerId {string}: The id of the player object.  This is used to
+                                * retrieve the correct player instance from the window.NOMENSA.player.PlayerDaemon  
+                                *---------------------------------------------------------------------------*/
                                 window.onYouTubePlayerReady = function (playerId) {
                                         var player = window.NOMENSA.player.PlayerDaemon.getPlayer(playerId);        // This is our initial object created by the mediaplayer plugin
                                         var myplayer = document.getElementById(player.config.id);     // This is a reference to the DOM element that we use as an interface through which to execute player commands
                                         player.player = myplayer;        // Pass the controller to our generated player object
                                         player.cue();
-          /* 
-          * Add our player specific event listeners
-          * This one listens for the onStateChange event and calls the 
-          * playerState function at the bottom of this document
-          *---------------------------------------------------------*/
+                                        /* 
+                                        * Add our player specific event listeners
+                                        * This one listens for the onStateChange event and calls the 
+                                        * playerState function at the bottom of this document
+                                        *---------------------------------------------------------*/
                                         player.getPlayer().addEventListener("onStateChange", "window.NOMENSA.player.stateHandlers." + inst.config.id);
                                         player.onPlayerReady();
                                 };
@@ -134,10 +134,10 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
                 var actions = [],
                 i;
 
-    /**
-     * If run without parameters, assume fired by event
-     * If param is a function, add this to those run when fired
-    */ 
+                /**
+                * If run without parameters, assume fired by event
+                * If param is a function, add this to those run when fired
+                */ 
 
                 return function (param) {
                         var actionsLen = actions.length;
@@ -152,22 +152,22 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
                         }
                 };
         }()),
-/*
- * Function that is called on Youtube player state change
- * We use this to listen for any play commands that have not been initialised
- * using the media player control panel (e.g. if the play button within the
- * actual flash element is activated).
- * 
- * @param state {int}: The state code for the player when this function is fired
- *   This code is set by the youtube api.  Can be one of:
- *     -> -1: Unstarted
- *     -> 0 : Ended
- *     -> 1 : Playing
- *     -> 2 : Paused
- *     -> 3 : Buffering
- *     -> 5 : Video Cued
- * 
- *---------------------------------------------------------------------------*/ 
+        /*
+        * Function that is called on Youtube player state change
+        * We use this to listen for any play commands that have not been initialised
+        * using the media player control panel (e.g. if the play button within the
+        * actual flash element is activated).
+        * 
+        * @param state {int}: The state code for the player when this function is fired
+        *   This code is set by the youtube api.  Can be one of:
+        *     -> -1: Unstarted
+        *     -> 0 : Ended
+        *     -> 1 : Playing
+        *     -> 2 : Paused
+        *     -> 3 : Buffering
+        *     -> 5 : Video Cued
+        * 
+        *---------------------------------------------------------------------------*/ 
         onPlayerStateChange : function (state) {
                 if(state == 1){
                         this.play();
@@ -179,10 +179,10 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
                         this.play();
                 }
         },
-/*
-  * Get an object containing some flashvars
-  * @return {obj}: A map of flashvariables
-  *---------------------------------------------------------*/
+        /*
+        * Get an object containing some flashvars
+        * @return {obj}: A map of flashvariables
+        *---------------------------------------------------------*/
         getFlashVars : function(){
                 var flashvars = {
                         controlbar: 'none',
@@ -193,81 +193,81 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
                 if(this.config.repeat) { flashvars.repeat = this.config.repeat; }
                 return flashvars;
         },
-/*
-  * Get an object containing some parameters for the flash movie
-  * @return {obj}: A map of flash parameters
-  *---------------------------------------------------------*/
+        /*
+        * Get an object containing some parameters for the flash movie
+        * @return {obj}: A map of flash parameters
+        *---------------------------------------------------------*/
         getFlashParams : function(){
                 return {
                         allowScriptAccess: "always",
                         wmode: 'transparent'
                 };
         },
-/*
-   * Method for generating the flash component 
-   * for the media player
-   * @return {obj}: A jQuery wrapped set
-   *---------------------------------------------------------*/
+        /*
+        * Method for generating the flash component 
+        * for the media player
+        * @return {obj}: A jQuery wrapped set
+        *---------------------------------------------------------*/
         generateFlashPlayer : function($playerContainer){
                 var $self = this;
-      /* Get our flash vars */
-      var flashvars = this.getFlashVars();
-      /* Create some parameters for the flash */
-      var params = this.getFlashParams();
-      /* Create some attributes for the flash */
-      var atts = {                                                
-              id: this.config.id,
-              name: this.config.id
-      };
-      /* Create our flash container with default content telling
-       * the user to download flash if it is not installed 
-*/
-      var $container = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id).addClass('flashReplace').html('This content requires Macromedia Flash Player. You can <a href="http://get.adobe.com/flashplayer/">install or upgrade the Adobe Flash Player here</a>.');
-      /* Create our video container */                                var $videoContainer = $('<span />').addClass('video');
-      /* Get the url for the player */
-      var url = this.getURL();
-      /********************************************************************************************************
-       *  set a timeout of 0, which seems to be enough to give IE time to update its
-       *  DOM. Strangest manifested bug on the planet. Details on how it manifested itself
-       *  in a project are below:
-       *  - IE breaks flash loading if the img src is external (ie, begins with http://+ any single character)*
-       *      AND
-       *  - If the src is internal AND the content has an <li></li> in a <ul> 
-       ********************************************************************************************************/
-      // This is where we embed our swf using swfobject
-      setTimeout(function() {
-              swfobject.embedSWF(url,
-                                 $container.attr('id'), $self.config.flashWidth,
-                                 $self.config.flashHeight, "9.0.115", null, flashvars, params, atts, $self.config.swfCallback);
-                                 // Dirty hack to remove element from tab index for versions of firefox that trap focus in flash
-                                 if($.browser.mozilla && ( parseInt($.browser.version, 10) >= 2)){
-                                         $self.$html.find('object').attr("tabindex", '-1');
-                                 }
-      }, 0);
-      // Create our entire player container
-      $playerContainer.append($videoContainer.append($container));
-      return $playerContainer;
+                /* Get our flash vars */
+                var flashvars = this.getFlashVars();
+                /* Create some parameters for the flash */
+                var params = this.getFlashParams();
+                /* Create some attributes for the flash */
+                var atts = {                                                
+                      id: this.config.id,
+                      name: this.config.id
+                };
+                /* Create our flash container with default content telling
+                * the user to download flash if it is not installed 
+                */
+                var $container = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id).addClass('flashReplace').html('This content requires Macromedia Flash Player. You can <a href="http://get.adobe.com/flashplayer/">install or upgrade the Adobe Flash Player here</a>.');
+                /* Create our video container */                                var $videoContainer = $('<span />').addClass('video');
+                /* Get the url for the player */
+                var url = this.getURL();
+                /********************************************************************************************************
+                *  set a timeout of 0, which seems to be enough to give IE time to update its
+                *  DOM. Strangest manifested bug on the planet. Details on how it manifested itself
+                *  in a project are below:
+                *  - IE breaks flash loading if the img src is external (ie, begins with http://+ any single character)*
+                *      AND
+                *  - If the src is internal AND the content has an <li></li> in a <ul> 
+                ********************************************************************************************************/
+                // This is where we embed our swf using swfobject
+                setTimeout(function() {
+                        swfobject.embedSWF(url,
+                                $container.attr('id'), $self.config.flashWidth,
+                                $self.config.flashHeight, "9.0.115", null, flashvars, params, atts, $self.config.swfCallback);
+                                // Dirty hack to remove element from tab index for versions of firefox that trap focus in flash
+                                if($.browser.mozilla && ( parseInt($.browser.version, 10) >= 2)){
+                                 $self.$html.find('object').attr("tabindex", '-1');
+                                }
+                }, 0);
+                // Create our entire player container
+                $playerContainer.append($videoContainer.append($container));
+                return $playerContainer;
         },
         generateVideoPlayer : function($playerContainer){
                 if (typeof window.postMessage === 'undefined') {
                         return this.generateFlashPlayer($playerContainer);
                 } else {
                         var $video = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id);
-      /* Create our video container */
-      var $videoContainer = $('<span />').addClass('video');
-      // Create our entire player container
-      $playerContainer.append($videoContainer.append($video));
-      return $playerContainer;
+                        /* Create our video container */
+                        var $videoContainer = $('<span />').addClass('video');
+                        // Create our entire player container
+                        $playerContainer.append($videoContainer.append($video));
+                        return $playerContainer;
                 }
         },
         getPlayer: function () {
                 return this.player;
         },
 
-  /**
-    * Past this point, functions are implemented keeping with the
-    * Nomensa accessibility API.
-*/
+        /**
+        * Past this point, functions are implemented keeping with the
+        * Nomensa accessibility API.
+        */
         is_html5: false,
         play: function () {
                 this.player.playVideo();
