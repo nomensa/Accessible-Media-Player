@@ -1,42 +1,45 @@
-#! /bin/bash
+#! /bin/sh
 
 ANSI_GREEN="\033[32m"
 ANSI_YELLOW="\033[33m"
 ANSI_RESET="\033[0m"
 
-dir=`pwd`
-plugin="${dir}/core/javascript/jquery.player.js"
-decorator="${dir}/core/javascript/mediaplayer_decorator.js"
-swfobject="${dir}/core/javascript/swfobject/swfobject.js"
-players[0]="${dir}/custom/javascript/config/jwplayer-5/jw-player.config.js"
-players[1]="${dir}/custom/javascript/config/vimeo/vimeo.config.js"
-players[2]="${dir}/core/javascript/youtube_player.js"
+CURRENT_DIR=`/bin/pwd`
 
-output="${dir}/core/javascript/jquery.player.min.js"
-temp=$dir/build/temp.js
+PLUGIN="${CURRENT_DIR}/core/javascript/jquery.player.js"
+DECORATOR="${CURRENT_DIR}/core/javascript/mediaplayer_decorator.js"
+SWFOBJECT="${CURRENT_DIR}/core/javascript/swfobject/swfobject.js"
 
-function on_exit()
-{
-  rm -f ${temp}
+# Players
+JW_PLAYER="${CURRENT_DIR}/custom/javascript/config/jwplayer-5/jw-player.config.js"
+VIMEO_PLAYER="${CURRENT_DIR}/custom/javascript/config/vimeo/vimeo.config.js"
+YOUTUBE_PLAYER="${CURRENT_DIR}/core/javascript/youtube_player.js"
+
+OUTPUT="${CURRENT_DIR}/core/javascript/jquery.player.min.js"
+TEMP=$CURRENT_DIR/build/temp.js
+
+on_exit() {
+    /bin/rm -f $TEMP
 }
 
 trap on_exit INT TERM EXIT
 
-# combine all scripts
-cat $swfobject ${players[@]} ${decorator} ${plugin} > $temp
+# Combine all scripts.
+/bin/cat $SWFOBJECT $JW_PLAYER $VIMEO_PLAYER $YOUTUBE_PLAYER $DECORATOR $PLUGIN > $TEMP
 
-echo -e "\nCompressing\n"
-echo -e "${ANSI_GREEN}${swfobject}"
-for player in ${players[@]}
-do
-  echo -e "${player}"
+/bin/echo -e "\nCompressing\n"
+/bin/echo -e "${ANSI_GREEN}${SWFOBJECT}"
+
+for player in ${JW_PLAYER} ${VIMEO_PLAYER} ${YOUTUBE_PLAYER}; do
+    /bin/echo -e "${player}"
 done
-echo -e "${decorator}"
-echo -e "${plugin}${ANSI_RESET}"
-echo -e "\ninto\n"
-echo -e "${ANSI_YELLOW}${output}${ANSI_RESET}"
 
-# compress
-java -jar ./build/yuicompressor-2.4.2.jar $temp --type js --charset utf-8 --preserve-semi -o ${output}
+/bin/echo -e "${DECORATOR}"
+/bin/echo -e "${PLUGIN}${ANSI_RESET}"
+/bin/echo -e "\ninto\n"
+/bin/echo -e "${ANSI_YELLOW}${OUTPUT}${ANSI_RESET}"
 
-echo -e "\nDone!"
+# Compress using YUI Compressor.
+java -jar ./build/yuicompressor-2.4.2.jar $TEMP --type js --charset utf-8 --preserve-semi -o $OUTPUT
+
+/bin/echo -e "\nDone!"
