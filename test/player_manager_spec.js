@@ -35,11 +35,11 @@ describe("window.NOMENSA.player.PlayerManager", function () {
 
     it("should be able to map a function", function () {
       var total = 0,
-          examplePlayer2 = {
-            config: {
-              id: 1
-            }
-          };
+      examplePlayer2 = {
+        config: {
+          id: 1
+        }
+      };
 
       manager.addPlayer(examplePlayer);
       manager.addPlayer(examplePlayer2);

@@ -1,12 +1,11 @@
 /**
- Jasmine Reporter that outputs test results to the browser console. 
- Useful for running in a headless environment such as PhantomJs, ZombieJs etc.
-
- Usage:
- // From your html file that loads jasmine:  
- jasmine.getEnv().addReporter(new jasmine.ConsoleReporter());
- jasmine.getEnv().execute();
-*/
+ * Jasmine Reporter that outputs test results to the browser console.
+ * Useful for running in a headless environment such as PhantomJs, ZombieJs etc.
+ *
+ * Usage (from your html file that loads jasmine):
+ *   jasmine.getEnv().addReporter(new jasmine.ConsoleReporter());
+ *   jasmine.getEnv().execute();
+ */
 
 (function(jasmine, console) {
   if (!jasmine) {
@@ -15,15 +14,15 @@
 
   var ANSI = {}
   ANSI.color_map = {
-      "green" : 32,
-      "red"   : 31
+    "green": 32,
+    "red": 31
   }
 
   ANSI.colorize_text = function(text, color) {
     var color_code = this.color_map[color];
     return "\033[" + color_code + "m" + text + "\033[0m";
   }
-  
+
   var ConsoleReporter = function() {
     if (!console || !console.log) { throw "console isn't present!"; }
     this.status = this.statuses.stopped;

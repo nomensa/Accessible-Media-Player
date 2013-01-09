@@ -1,6 +1,6 @@
 describe("MediaPlayerDecorator", function () {
   var player,
-      decorator;
+  decorator;
 
   var state = {
     'ended': 0,
@@ -48,7 +48,7 @@ describe("MediaPlayerDecorator", function () {
 
   var cleanUpYoutubeDOM = function () {
     var apiScript = document.querySelectorAll("script[src='//www.youtube.com/iframe_api']")[0],
-        wrapperDiv = document.getElementById(defaultConfig.id);
+    wrapperDiv = document.getElementById(defaultConfig.id);
 
     if (apiScript) {
       document.getElementsByTagName('head')[0].removeChild(apiScript);
@@ -68,20 +68,20 @@ describe("MediaPlayerDecorator", function () {
   beforeEach(function () {
     createWrapperDiv();
     player = jasmine.createSpyObj('player', ["play", "pause", "ffwd", "rewd", "mute",
-                          "volup", "voldwn", "getDuration", "getCurrentTime",
-                          "getBytesLoaded", "getBytesTotal", "seek", "cue", "init"]),
+                                             "volup", "voldwn", "getDuration", "getCurrentTime",
+                                             "getBytesLoaded", "getBytesTotal", "seek", "cue", "init"]),
     decorator = new window.NOMENSA.player.MediaplayerDecorator(player);
   });
 
   afterEach(function () {
     var decorator = null;
-    
+
     cleanUpYoutubeDOM();
   });
 
   it("should have all the shared functions", function () {
     var method;
-    
+
     for (var idx = 0; idx < sharedMethods.length; idx++) {
       method = sharedMethods[idx];
       expect(decorator[method]).toBeDefined();
