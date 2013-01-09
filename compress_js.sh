@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 ANSI_GREEN="\033[32m"
 ANSI_YELLOW="\033[33m"
