@@ -21,16 +21,18 @@ ANSI_GREEN="\033[32m"
 ANSI_YELLOW="\033[33m"
 ANSI_RESET="\033[0m"
 
-header="./build/header.txt"
-plugin="./core/javascript/jquery.player.js"
-decorator="./core/javascript/mediaplayer_decorator.js"
-swfobject="./core/javascript/swfobject/swfobject.js"
-jwplayer[0]="./custom/javascript/config/jwplayer-5/core/jwplayer.js"
-jwplayer[1]="./custom/javascript/config/jwplayer-5/jw-player.config.js"
-vimeo="./custom/javascript/config/vimeo/vimeo.config.js"
-players[0]="./core/javascript/youtube_player.js"
+HEADER="./build/header.txt"
+PLUGIN="./core/javascript/jquery.player.js"
+DECORATOR="./core/javascript/mediaplayer_decorator.js"
+SWFOBJECT="./core/javascript/swfobject/swfobject.js"
+JWPLAYER="./custom/javascript/config/jwplayer-5/core/jwplayer.js"
+JWPLAYER_CONFIG="./custom/javascript/config/jwplayer-5/jw-player.config.js"
+VIMEO_PLAYER="./custom/javascript/config/vimeo/vimeo.config.js"
+YOUTUBE_PLAYER="./core/javascript/youtube_player.js"
+OUTPUT="./core/javascript/jquery.player.min.js"
 
-output="./core/javascript/jquery.player.min.js"
+players[0]=$DECORATOR
+players[1]=$YOUTUBE_PLAYER
 compressed="./build/compressed.js"
 combined="./build/combined.js"
 
@@ -50,35 +52,34 @@ while [ "$1" != "" ]; do
       exit 1
       ;;
     "jwplayer" )      
-      players[${#players[@]}]=${jwplayer[0]}
-      players[${#players[@]}]=${jwplayer[1]}
+      players[${#players[@]}]=$JWPLAYER
+      players[${#players[@]}]=$JWPLAYER_CONFIG
       ;;
     "vimeo" )         
-      players[${#players[@]}]=${vimeo}
+      players[${#players[@]}]=${VIMEO_PLAYER}
       ;;
   esac
   shift
 done
 
-echo ${players[@]}
-
 # combine all scripts
-cat $swfobject ${players[@]} ${decorator} ${plugin} > $combined
+cat ${SWFOBJECT} ${players[@]} ${DECORATOR} ${PLUGIN} > $combined
 
 echo -e "\nCompressing\n"
-echo -e "${ANSI_GREEN}${swfobject}"
-for player in ${players[@]}
-do
-  echo -e "${player}"
+echo -e "${ANSI_GREEN}${SWFOBJECT}"
+
+for player in ${players[@]}; do
+    echo -e "${player}"
 done
-echo -e "${decorator}"
-echo -e "${plugin}${ANSI_RESET}"
-echo -e "\ninto\n"
-echo -e "${ANSI_YELLOW}${output}${ANSI_RESET}"
+
+echo ""
+echo -e "${ANSI_RESET}into"
+echo ""
+echo -e "${ANSI_YELLOW}${OUTPUT}${ANSI_RESET}"
 
 # compress
 java -jar "./build/yuicompressor-2.4.2.jar" $combined --type js --charset utf-8 --preserve-semi -o $compressed
 
-cat $header $compressed > $output
+cat $HEADER $compressed > $OUTPUT
 
 echo -e "\nDone!"

@@ -44,32 +44,32 @@ describe("jquery.player tests (integration)", function () {
 
     beforeEach(function () {
       defaultConfig = {
-          id: 'media_player',
-          url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
-          media: '8LiQ-bLJaM4',
-          repeat: false,
-          captions: null,
-          captionsOn: true,
-          flashWidth: '100%',
-          flashHeight: '300px',
-          playerStyles: {
-              'height': '100%',
-              'width': '100%'
-          },
-          sliderTimeout: 350,
-          flashContainer: 'span',
-          playerContainer: 'span',
-          image: '',
-          playerSkip: 10,
-          volumeStep: 10,
-          buttons: {
-              forward: true,
-              rewind: true,
-              toggle: true
-          },
-          logoURL: 'http://www.nomensa.com?ref=logo',
-          useHtml5: true,
-          swfCallback: null
+        id: 'media_player',
+        url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
+        media: '8LiQ-bLJaM4',
+        repeat: false,
+        captions: null,
+        captionsOn: true,
+        flashWidth: '100%',
+        flashHeight: '300px',
+        playerStyles: {
+          'height': '100%',
+          'width': '100%'
+        },
+        sliderTimeout: 350,
+        flashContainer: 'span',
+        playerContainer: 'span',
+        image: '',
+        playerSkip: 10,
+        volumeStep: 10,
+        buttons: {
+          forward: true,
+          rewind: true,
+          toggle: true
+        },
+        logoURL: 'http://www.nomensa.com?ref=logo',
+        useHtml5: true,
+        swfCallback: null
       };
 
       videoLink = document.createElement("a");
@@ -123,10 +123,10 @@ describe("jquery.player tests (integration)", function () {
           holder.player({
             id: 'youtube1',
             media: youtubeId,
-            url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
+            url: 'http://www.youtube.com/watch?v=0yIniSJIego'
           });
         });
-        
+
         it("should call the constructor", function () {
           expect(window.NOMENSA.player.YoutubePlayer).toHaveBeenCalled();
         });
@@ -149,8 +149,8 @@ describe("jquery.player tests (integration)", function () {
           // methods do not need to be spys so just stub
           return {
             init : function () {},
-              onPlayerReady : function () {},
-              onPlayerStateChange : function () {}
+            onPlayerReady : function () {},
+            onPlayerStateChange : function () {}
           }
         });
 
@@ -158,14 +158,14 @@ describe("jquery.player tests (integration)", function () {
         holder.player({
           id: 'youtube1',
           media: youtubeId,
-          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego'
         });
         expect(window.NOMENSA.player.MediaplayerDecorator).toHaveBeenCalled();
       });
 
       it("should call the MediaplayerDecorator constructor with an instance of YoutubePlayer", function () {
         var config = defaultConfig,
-            youTubePlayerCopy;
+        youTubePlayerCopy;
 
         spyOn(window.NOMENSA.player, "MediaplayerDecorator").andCallFake(function () {
           // methods do not need to be spys so just stub
@@ -180,7 +180,7 @@ describe("jquery.player tests (integration)", function () {
         holder.player({
           id: 'youtube1',
           media: youtubeId,
-          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego'
         });
 
         config.id = 'youtube1';
@@ -200,7 +200,7 @@ describe("jquery.player tests (integration)", function () {
         holder.player({
           id: 'youtube1',
           media: youtubeId,
-          url: 'http://www.youtube.com/watch?v=0yIniSJIego' 
+          url: 'http://www.youtube.com/watch?v=0yIniSJIego'
         });
 
         expect(spyInst.init).toHaveBeenCalled();

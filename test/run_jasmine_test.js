@@ -25,12 +25,12 @@ PhantomJasmineRunner = (function() {
 
   PhantomJasmineRunner.prototype.terminate = function() {
     switch (this.get_status()) {
-      case "success":
-        return this.exit_func(0);
-      case "fail":
-        return this.exit_func(1);
-      default:
-        return this.exit_func(2);
+    case "success":
+      return this.exit_func(0);
+    case "fail":
+      return this.exit_func(1);
+    default:
+      return this.exit_func(2);
     }
   };
 
