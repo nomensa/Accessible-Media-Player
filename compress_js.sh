@@ -31,18 +31,16 @@ VIMEO_PLAYER="./custom/javascript/config/vimeo/vimeo.config.js"
 YOUTUBE_PLAYER="./core/javascript/youtube_player.js"
 OUTPUT="./core/javascript/jquery.player.min.js"
 
-players[0]=$DECORATOR
-players[1]=$YOUTUBE_PLAYER
-compressed="./build/compressed.js"
-combined="./build/combined.js"
+COMPRESSED="./build/compressed.js"
+COMBINED="./build/combined.js"
 
-function on_exit()
-{
-  rm -f ${combined}
-  rm -f ${compressed}
-}
+trap "rm -f ${COMBINED}; rm -f ${COMPRESSED}; exit 1" INT TERM EXIT
 
-trap on_exit INT TERM EXIT
+printf "\nCompressing\n\n"
+printf "%b${ANSI_GREEN}"
+
+cat ${SWFOBJECT} ${YOUTUBE_PLAYER} ${DECORATOR} > $COMBINED
+printf "${SWFOBJECT}\n${YOUTUBE_PLAYER}\n${DECORATOR}\n"
 
 # Add any sent players
 while [ "$1" != "" ]; do
@@ -52,34 +50,28 @@ while [ "$1" != "" ]; do
       exit 1
       ;;
     "jwplayer" )      
-      players[${#players[@]}]=$JWPLAYER
-      players[${#players[@]}]=$JWPLAYER_CONFIG
-      ;;
+      cat ${JWPLAYER} ${JWPLAYER_CONFIG} >> $COMBINED
+      printf "${JWPLAYER}\n${JWPLAYER_CONFIG}\n"
+      ;;			
     "vimeo" )         
-      players[${#players[@]}]=${VIMEO_PLAYER}
+      cat ${VIMEO_PLAYER} >> $COMBINED
+      printf "${VIMEO_PLAYER}\n"
       ;;
   esac
   shift
 done
 
 # combine all scripts
-cat ${SWFOBJECT} ${players[@]} ${DECORATOR} ${PLUGIN} > $combined
+cat ${PLUGIN} >> $COMBINED
+printf "${PLUGIN}\n"
 
-echo -e "\nCompressing\n"
-echo -e "${ANSI_GREEN}${SWFOBJECT}"
-
-for player in ${players[@]}; do
-    echo -e "${player}"
-done
-
-echo ""
-echo -e "${ANSI_RESET}into"
-echo ""
-echo -e "${ANSI_YELLOW}${OUTPUT}${ANSI_RESET}"
+/bin/echo ""
+printf "%b${ANSI_RESET}into\n\n"
+printf "%b${ANSI_YELLOW}${OUTPUT}${ANSI_RESET}\n"
 
 # compress
-java -jar "./build/yuicompressor-2.4.2.jar" $combined --type js --charset utf-8 --preserve-semi -o $compressed
+java -jar "./build/yuicompressor-2.4.2.jar" $COMBINED --type js --charset utf-8 --preserve-semi -o $COMPRESSED
 
-cat $HEADER $compressed > $OUTPUT
+cat $HEADER $COMPRESSED > $OUTPUT
 
-echo -e "\nDone!"
+printf "\nDone!"
