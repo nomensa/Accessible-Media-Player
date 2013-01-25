@@ -217,6 +217,24 @@ describe("Youtube Player", function() {
       expect(options.playerVars.playlist).toBeDefined();
       expect(options.playerVars.playlist).toBe("test1");
     });
+
+    it("should return an onReady which adds the correct attributes to the IFrame", function () {
+      var options,
+          config = {
+        flashHeight : 100,
+        flashWidth : 200,
+        media : "test1",
+        repeat : 1
+      };
+
+      youtube = new window.NOMENSA.player.YoutubePlayer(config); 
+      youtube.$html = $("<span><iframe /></span>");
+      expect(youtube.$html.attr("role")).not.toBeDefined();
+      options = youtube.getYTOptions();
+      options.events.onReady();
+      expect(youtube.$html.find("iframe").attr("role")).toBeDefined();
+      expect(youtube.$html.find("iframe").attr("role")).toEqual("presentation");
+    });
   });
 
   describe("Interacting with videos", function () {
