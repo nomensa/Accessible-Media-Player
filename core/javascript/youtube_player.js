@@ -25,7 +25,7 @@ window.NOMENSA.player.YoutubePlayer.prototype = {
       events: {
         'onReady': function (event) {
           // loaded player's id should match that in config, as with mediaplayer
-          inst.$html.find("iframe").attr("id", inst.config.id);
+          inst.$html.find("iframe").attr({"id" : inst.config.id, "role" : "presentation"});
 
           inst.onPlayerReady(event);
         },
