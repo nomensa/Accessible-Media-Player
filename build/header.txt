@@ -5,7 +5,7 @@
 *    Vimeo and JWPlayer although it should be possible to integrate the player with almost any media player on
 *    the web (provided a JavaScript api for the player in question is available).
 *    
-*    Copyright (C) 2012  Nomensa Ltd
+*    Copyright (C) 2013  Nomensa Ltd
 *
 *    Version 2.1.1 
 *
