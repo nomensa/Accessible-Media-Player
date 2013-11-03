@@ -159,17 +159,43 @@ var html5_methods = {
 		* Method for detecting whether or not HTML5 video is supported
 		* @param mimetype {string}: The mimetype for the video in use 
 		* as expected in the 'type' attribute of the video element
-		* @return {boolean}: True if the browser supports HTML5 video/audio
-		* and the mimetype parameter is likely to play in this browser
+		* @return {object|false}: an object containing details of supported media if the browser supports HTML5 video/audio if any
+		* and any provided mimetypes are likely to play in this browser
 		*---------------------------------------------------------*/
-		var supports_media = function(mimetype, container) {
-			var elem = document.createElement(container);
-			if(elem.canPlayType != undefined){
-				var playable = elem.canPlayType(mimetype);
-				if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
-					return true;
-				}
-			}
+		var supported_media = function(player) {
+			var media = player.config.media,
+                elem,
+                mediatype,
+                playable,
+                isPlayable,
+                a,b;
+
+			isPlayable = function(media) {
+                elem = document.createElement(media.container);
+                if(elem.canPlayType != undefined){
+                    playable = elem.canPlayType(media.mimetype);
+                    if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
+                        return true;
+                    }
+                }
+            };
+
+            if (typeof media === 'string') {
+                mediatype = get_media_type(media);
+                if (isPlayable(mediatype)) {
+                    mediatype.src = media;
+                    return mediatype;
+                }
+            }
+            if ((media instanceof Array) && (typeof media.push !== 'undefined')) {
+                for (a = 0, b = media.length; a < b; a++) {
+                    mediatype = get_media_type(media[a]);
+                    if (isPlayable(mediatype)) {
+                        mediatype.src = media[a];
+                        return mediatype;
+                    }
+                }
+            }
 			return false;
 		};
 		/*
@@ -208,11 +234,10 @@ var html5_methods = {
 		};
 		/*
 		* Function for extracting the media file extension such as mp3, mp4, ogg etc
-		* @param player {object}: A media player instance
+		* @param media {string}: the media file
 		* @return {object}: Mime-type for the file and codecs or null if no file type found, also returns the type of media container
 		*---------------------------------------------------------*/
-		var get_media_type = function(player){
-			var media = player.config.media;
+		var get_media_type = function(media){
 			var strt = media.lastIndexOf('.');
 			if(strt != -1 ){
 				var ext = media.substring(strt+1);
@@ -853,9 +878,10 @@ var html5_methods = {
 			// Player manager into the player object (in the main player function loop)
 			this.is_html5 = false;
 			// Get the media type (mime type and codecs)
-			var media = get_media_type(this);
+			var media = supported_media(this);
 			// Check to see if the media type is supported by the browser
-			if(media && supports_media(media.mimetype, media.container)  && this.config.useHtml5){	// HTML 5 video element is supported
+			if(media && this.config.useHtml5){	// HTML 5 video element is supported
+				this.config.media = media.src;
 				// Flag the object as using HTML5
 				this.is_html5 = true;
 				// Assemble the HTML5 controls
