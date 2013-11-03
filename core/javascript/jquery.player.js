@@ -889,6 +889,9 @@ var html5_methods = {
 				// Merge in our HTML5 controller methods
 				$.extend(this, html5_methods);
 			}else{	// Fallback to use flash
+                if ((this.config.media instanceof Array) && (typeof this.config.media.push !== 'undefined')) {
+                    this.config.media = this.config.media[0];
+                }
 				this.$html = this.assembleHTML();
 			}
 			// If we have a captions file, add it to the mp object

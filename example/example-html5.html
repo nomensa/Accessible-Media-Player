@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	    <meta charset="utf-8" />
+	    
+	    <title>Accessible Media Player Example - HTML5 Player</title>
+	
+		<!-- Include styles for media player -->
+	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
+	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
+	
+		<!-- Include googles JSAPI and load jQuery from there -->
+	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.0");
+	        google.load("jqueryui", "1.8.13");
+	    </script>
+	    
+	    <!-- Include swfobject for embedding flash in the page -->
+	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
+	    <!-- Include the jw player api scripts -->
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/core/jwplayer.js"></script>
+	    <!-- Include the jw player specific config scripts -->
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/jw-player.config.js"></script>
+		<!-- Include the accessible media player script -->
+	    <script type="text/javascript" src="../core/javascript/jquery.player.js"></script>
+	    <!-- Custom script for generating the jw player using the jw config -->
+	    <script type="text/javascript">
+	    $(document).ready(function(){
+		    var $media_links = $("a[href$='mp4'], a[href$='ogv'], a[href$='webm']");
+		
+		    // Create players for our media links
+		    $.each($media_links, function(i) {
+		        var $holder = $('<span />');
+                // Extract the url/path from the links href attribute
+                if ($(this).siblings("a[href$='ogv'], a[href$='webm']").length > 0) {
+                    var link = [$(this).attr('href')];
+                    $(this).siblings("a[href$='ogv'], a[href$='webm']").each(function() {
+                        link.push($(this).attr('href'));
+                    });
+                } else {
+                    var link = $(this).attr('href');
+                }
+				$(this).parent().replaceWith($holder);
+		        // Grab the captions if they exist
+				var $captions = $(this).siblings('.captions');
+				// Work out if the video has captions
+				var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
+				// Instantiate the jwplayer
+		        $holder.player({
+		            id:'jw'+i,
+		            media:link,
+					captions:captionsFile,
+		        	flashHeight: 300,
+		        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+		        	swfCallback : jwPlayerReady
+		        }, jwconfig);
+		    });
+
+	    });
+	    </script>
+	</head>
+	<body>
+	    <div>
+	        <h1>Accessible Media Player</h1>
+			<h2>Examples</h2>
+	        <h3>HTML5 Player (falls back to JW Player) available in MP4, OPV and WEBM formats</h3>
+	        <p>
+	        	<a href="../../../../../example/video/hidden-elements.mp4">Screen readers and hidden elements [MP4, 3MB]</a>
+	        	<a href="../../../../../example/video/hidden-elements.ogv">Screen readers and hidden elements [OGV, 3MB]</a>
+	        	<a href="../../../../../example/video/hidden-elements.webm">Screen readers and hidden elements [WEBM, 3MB]</a>
+	        	<a class="captions" href="captions/captions-hidden-elements.xml" style="display:none;">Captions</a>
+	        </p>
+	    </div>
+	</body>
+</html>
