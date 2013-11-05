@@ -70,8 +70,8 @@ printf "%b${ANSI_RESET}into\n\n"
 printf "%b${ANSI_YELLOW}${OUTPUT}${ANSI_RESET}\n"
 
 # compress
-java -jar "./build/yuicompressor-2.4.2.jar" $COMBINED --type js --charset utf-8 --preserve-semi -o $COMPRESSED
+# java -jar "./build/yuicompressor-2.4.2.jar" $COMBINED --type js --charset utf-8 --preserve-semi -o $COMPRESSED
 
-cat $HEADER $COMPRESSED > $OUTPUT
+cat $HEADER $COMBINED > $OUTPUT
 
 printf "\nDone!"
