@@ -174,9 +174,9 @@ var html5_methods = {
 				elem = document.createElement(media.container);
 				if(elem.canPlayType != undefined){
 					playable = elem.canPlayType(media.mimetype);
-				if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
-					return true;
-				}
+					if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
+						return true;
+					}
 				}
 			};
 
