@@ -32,8 +32,8 @@ jQuery(function($) {
 	 * OR you could do a jQuery lookup for specific links/file types
 	 * (simple but potentially less flexible and extra load on the browser)
 	 */
-	var $yt_links = $("a[href*='http://www.youtube.com/watch'],a[href*='https://www.youtube.com/watch']");
-    var $vimeo_links = $("a[href*='http://vimeo.com/'],a[href*='https://vimeo.com/']");
+	var $yt_links = $("a[href*='http://www.youtube.com/watch']");
+    var $vimeo_links = $("a[href*='http://vimeo.com/']");
     var $media_links = $("a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
     var $audio_links = $("a[href$='mp3']");
     

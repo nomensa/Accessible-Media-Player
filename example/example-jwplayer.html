@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	    <meta charset="utf-8" />
+	    
+	    <title>Accessible Media Player Example - JW Player</title>
+	
+		<!-- Include styles for media player -->
+	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
+	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
+	
+		<!-- Include googles JSAPI and load jQuery from there -->
+	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.0");
+	        google.load("jqueryui", "1.8.13");
+	    </script>
+	    
+	    <!-- Include swfobject for embedding flash in the page -->
+	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
+	    <!-- Include the jw player api scripts -->
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/core/jwplayer.js"></script>
+	    <!-- Include the jw player specific config scripts -->
+	    <script type="text/javascript" src="../custom/javascript/config/jwplayer-5/jw-player.config.js"></script>
+		<!-- Include the accessible media player script -->
+	    <script type="text/javascript" src="../core/javascript/jquery.player.js"></script>
+	    <!-- Custom script for generating the jw player using the jw config -->
+	    <script type="text/javascript">
+	    $(document).ready(function(){
+		    var $media_links = $("a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
+		    var $audio_links = $("a[href$='mp3']");
+		    
+		    // Create players for our audio links
+		    $.each($audio_links, function(i) {
+		        var $holder = $('<span />');
+		        $(this).parent().replaceWith($holder);
+		        // Get the path/url tpo the audio file
+		        var link = $(this).attr('href');
+		        // Create an instance of the player 
+		        $holder.player({
+		            id:'audio'+i,
+		            media:link,
+		        	flashHeight: 50,
+		        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+		            playerWidth: '270px',
+		            swfCallback : jwPlayerReady
+		        }, jwconfig);
+		    });
+		
+		    // Create players for our media links
+		    $.each($media_links, function(i) {
+		        var $holder = $('<span />');
+				$(this).parent().replaceWith($holder);
+		        // Extract the url/path from the links href attribute
+		        var link = $(this).attr('href');
+		        // Grab the captions if they exist
+				var $captions = $(this).siblings('.captions');
+				// Work out if the video has captions
+				var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
+				// Instantiate the jwplayer
+		        $holder.player({
+		            id:'jw'+i,
+		            media:link,
+					captions:captionsFile,
+		        	flashHeight: 300,
+		        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+		        	swfCallback : jwPlayerReady
+		        }, jwconfig);
+		    });
+
+	    });
+	    </script>
+	</head>
+	<body>
+	    <div>
+	        <h1>Accessible Media Player</h1>
+			<h2>Examples</h2>
+	        <h3>JW Player - MP4 File</h3>
+	        <!--
+	        	There is a bug in the JW Player that causes issues with relative paths to 
+	        	audio and video files.  Video files expect paths to be declared relative
+	        	to the jw player.swf.  Audio files expect paths to be declared relative to
+	        	the document (HTML file).  One work around is to provide fully qualified urls
+	        	in a production environment.  more info on this bug can be found at the url below:
+	        	http://www.longtailvideo.com/support/forums/jw-player/setup-issues-and-embedding/10303/flv-relative-path-problem
+	       	-->
+	        <p>
+	        	<a href="../../../../../example/video/hidden-elements.mp4">Screen readers and hidden elements</a>
+	        	<a class="captions" href="captions/captions-hidden-elements.xml" style="display:none;">Captions</a>
+	        </p>
+	    	
+	        <h3>JW Player - MP3 File</h3>
+	        <p>
+	        	<a href="../example/audio/Jaws_HTML_Tables.mp3">Tester MP3 file</a>
+	        </p>
+	    </div>
+	</body>
+</html>

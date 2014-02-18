@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	    <meta charset="utf-8" />
+	    
+	    <title>Accessible Media Player Example - YouTube</title>
+		
+		<!-- Include styles for media player -->
+	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
+	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
+	
+		<!-- Include google's JSAPI and load jQuery from there -->
+	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        google.load("jquery", "1.6.0");
+	        google.load("jqueryui", "1.8.13");
+	    </script>
+	    
+	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
+	    <!-- Include the accessible media player script -->
+	    <script type="text/javascript" src="../core/javascript/jquery.player.min.js"></script>
+	    <!-- Custom script for generating the youtube player -->
+	    <script type="text/javascript">
+	    $(document).ready(function(){
+	    	// Find all links to videos on youtube
+	    	var $yt_links = $("a[href*='http://www.youtube.com/watch']");
+	    	// Create players for our youtube links
+		    $.each($yt_links, function(i) {
+		        var $holder = $('<span />');
+		        $(this).parent().replaceWith($holder);
+		        // Find the captions file if it exists
+		        var $mycaptions = $(this).siblings('.captions');
+		        // Work out if we have captions or not
+		        var captionsf = $($mycaptions).length > 0 ? $($mycaptions).attr('href') : null;
+		        // Ensure that we extract the last part of the youtube link (the video id)
+		        // and pass it to the player() method
+		        var link = $(this).attr('href').split("=")[1];
+		        // Initialise the player
+		        $holder.player({
+		            id:'yt'+i,
+		            media:link,
+					captions:captionsf
+		        });
+		    });
+    	});
+	    </script>
+	    
+	</head>
+	<body>
+	    <div>
+	        <h1>Accessible Media Player</h1>
+			<div>
+				<h2>Examples</h2>
+		        <h3>YouTube Player with captions</h3>
+		        <p>
+		        	<a href="http://www.youtube.com/watch?v=kXiGXcq4pqY">Order of content by Emily Coward</a>
+		        	<a class="captions" href="./captions/captions-order-of-content.xml" style="display:none;">Captions</a>
+		        </p>
+		        
+				<h3>YouTube Player without captions</h3>
+				<p>
+					<a href="http://www.youtube.com/watch?v=IhWMou12_Vk">Aria Document Landmark Roles</a>
+				</p>
+		    </div>
+	    </div>
+	</body>
+</html>
