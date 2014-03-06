@@ -46,7 +46,7 @@ modify or distribute it free of charge.
 We use:
 
 1. [jQuery](http://jquery.com/)
-2. [jQuery UI](http://jqueryui.com/)
+2. [jQuery UI](http://jqueryui.com/) - Requires only: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.slider.js
 3. [JW Player](http://www.longtailvideo.com/players/)
 4. [Vimeo](http://vimeo.com/)
 5. [YouTube](http://www.youtube.com/)
