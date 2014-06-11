@@ -82,7 +82,7 @@ var jwconfig = {
 function jwPlayerReady(obj) {
 	var id = jQuery(obj.ref).attr('id');	// Unsure why but jwplayer callback prefixes the id with 'player'. 
 									// Instead we'll just extract the id from a jQuery wrapped set of obj.ref
-	var player = PlayerDaemon.getPlayer(id);
+	var player = window.NOMENSA.player.PlayerDaemon.getPlayer(id);
 	var myplayer = jwplayer(obj.ref);	// We get the player manager instance by wrapping it in the jwplayer method
 	player.init(myplayer);
 }

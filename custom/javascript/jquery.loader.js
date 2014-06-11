@@ -27,15 +27,16 @@ jQuery(function($) {
  * There are many ways in which you can load the Accessible Media Player. The best method 
  * will vary depending on any implementation and/or CMS restrictions you might have.
  */
-    
-	/*
-	 * OR you could do a jQuery lookup for specific links/file types
-	 * (simple but potentially less flexible and extra load on the browser)
-	 */
-	var $yt_links = $("a[href*='http://www.youtube.com/watch']");
-    var $vimeo_links = $("a[href*='http://vimeo.com/']");
-    var $media_links = $("a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
-    var $audio_links = $("a[href$='mp3']");
+
+    /*
+     * OR you could do a jQuery lookup for specific links/file types
+     * (simple but potentially less flexible and extra load on the browser)
+    */
+    var protocol = window.location.protocol;
+    var $yt_links = $(".media-player-wrapper a[href*='" + protocol + "//www.youtube.com/watch']");
+    var $vimeo_links = $(".media-player-wrapper a[href*='" + protocol + "//vimeo.com/']");
+    var $media_links = $(".media-player-wrapper a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
+    var $audio_links = $(".media-player-wrapper a[href$='mp3']");
     
     // Create players for our youtube links
     $.each($yt_links, function(i) {
@@ -52,7 +53,8 @@ jQuery(function($) {
         $holder.player({
             id:'yt'+i,
             media:link,
-			captions:captionsf
+            captions:captionsf,
+            flashHeight: 350
         });
     });
 
@@ -73,7 +75,7 @@ jQuery(function($) {
             id:'vimeo'+i,
             url: 'http://vimeo.com/moogaloop.swf?clip_id=',
             media:link,
-			captions:captionsf
+            captions:captionsf
         }, vimeoconfig);
     });
 
@@ -87,8 +89,8 @@ jQuery(function($) {
         $holder.player({
             id:'audio'+i,
             media:link,
-        	flashHeight: 50,
-        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+            flashHeight: 50,
+            url: '../custom/javascript/config/jwplayer-5/core/player.swf',
             playerWidth: '270px',
             swfCallback : jwPlayerReady
         }, jwconfig);
@@ -100,19 +102,18 @@ jQuery(function($) {
         // Extract the url/path from the links href attribute
         var link = $(this).attr('href');
         // Grab the captions if they exist
-		var $captions = $(this).siblings('.captions');
-		// Work out if the video has captions
-		var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
-		$(this).parent().replaceWith($holder);
-		// Instantiate the jwplayer
+        var $captions = $(this).siblings('.captions');
+        // Work out if the video has captions
+        var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
+        $(this).parent().replaceWith($holder);
+        // Instantiate the jwplayer
         $holder.player({
             id:'jw'+i,
             media:link,
-			captions:captionsFile,
-        	flashHeight: 300,
-        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
-        	swfCallback : jwPlayerReady
+            captions:captionsFile,
+            flashHeight: 300,
+            url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+            swfCallback : jwPlayerReady
         }, jwconfig);
     });
-
 });
