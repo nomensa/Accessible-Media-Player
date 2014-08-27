@@ -1,25 +1,5 @@
-/**
-*    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.  
-*    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar 
-*    for interacting with a media player of your choice. We currently provide support for YouTube (default),
-*    Vimeo and JWPlayer although it should be possible to integrate the player with almost any media player on
-*    the web (provided a JavaScript api for the player in question is available).
-*    
-*    Copyright (C) 2012  Nomensa Ltd
-*
-*    This program is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    This program is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU General Public License for more details.
-*
-*    You should have received a copy of the GNU General Public License
-*    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-**/
+window.NOMENSA = window.NOMENSA || {};
+window.NOMENSA.player = window.NOMENSA.player || {};
 
 // Bind function to resize event of the window/viewport
 jQuery(function($) {
@@ -35,11 +15,21 @@ jQuery(function($) {
 });
 
 /*
+* Global object used to hold functions for calling player's
+* onPlayerStateChange methods.
+* The Youtube AS3 API only allows the callback to be named,
+* not sent in, so we add a function to this object linked to
+* to each player's id
+*/ 
+if (typeof window.postMessage === "undefined") {
+  window.NOMENSA.player.stateHandlers = {};
+}
+/*
 * Global object used for managing all the players on our page
 * Use the getPlayer, addPlayer and removePlayer methods for 
-* modifying the players within the PlayerManager
+* modifying the players within the window.NOMENSA.player.PlayerManager
 *---------------------------------------------------------*/
-var PlayerManager = function(){
+window.NOMENSA.player.PlayerManager = function(){
 	//This is where we will store all of our player instances
 	var players = {};	
 	/*
@@ -55,7 +45,7 @@ var PlayerManager = function(){
 	};
 	/*
 	* Use this method for adding a player to the player list
-	* @param player {object}: The player object that we want to add to our PlayerManagers players list
+	* @param player {object}: The player object that we want to add to our window.NOMENSA.player.PlayerManagers players list
 	* @return {bool}: True if the player was added to the list, false if it already exists within the list
 	*---------------------------------------------------------*/
 	this.addPlayer = function(player){
@@ -72,13 +62,22 @@ var PlayerManager = function(){
 			delete players[playerID];
 		}
 	};
+	/*
+	* Use this method to call a function against each member of the player list
+	*---------------------------------------------------------*/
+	this.map = function(func){
+                var player;
+                for(player in players) {
+                        func(players[player]);
+                }
+        };
 };
 
 /*
-* Create a new instance of our PlayerManager object 
+* Create a new instance of our window.NOMENSA.player.PlayerManager object 
 * See object above for info on how this works
 *----------------------------------------------------*/
-var PlayerDaemon = new PlayerManager();
+window.NOMENSA.player.PlayerDaemon = new window.NOMENSA.player.PlayerManager();
 
 /*
 * Methods for and HTML5 video player.  These should be browser and implementation inspecific. 
@@ -95,8 +94,8 @@ var PlayerDaemon = new PlayerManager();
 var html5_methods = {
 		play : function(){this.player.play();this.setSliderTimeout();if(this.config.captionsOn && this.captions){this.setCaptionTimeout();}},
 		pause : function(){this.player.pause();this.clearSliderTimeout();if(this.config.captionsOn && this.captions){this.clearCaptionTimeout();}},
-		ffwd : function(){var time = this.getCurrentTime() + this.config.player_skip;this.seek(time);},
-		rewd : function(){var time = this.getCurrentTime() - this.config.player_skip;if(time < 0){time = 0;}this.seek(time);},
+		ffwd : function(){var time = this.getCurrentTime() + this.config.playerSkip;this.seek(time);},
+		rewd : function(){var time = this.getCurrentTime() - this.config.playerSkip;if(time < 0){time = 0;}this.seek(time);},
 		mute : function(){var $button = this.$html.find('button.mute');if(this.player.muted){this.player.muted = false;if($button.hasClass('muted')){$button.removeClass('muted');}}else{this.player.muted = true;$button.addClass('muted');}},
 		volup : function(){var vol = this.player.volume * 100;if(vol < (100 - this.config.volumeStep)){vol += this.config.volumeStep;}else{vol = 100;}this.player.volume = (vol/100);this.updateVolume(Math.round(vol));},
 		voldwn : function(){var vol = this.player.volume * 100;if(vol > this.config.volumeStep){vol -= this.config.volumeStep;}else{vol = 0;}this.player.volume = (vol/100);this.updateVolume(Math.round(vol));},
@@ -127,12 +126,12 @@ var html5_methods = {
 		// Define the default config settings for the plugin
 		var defaults = {
 			id: 'media_player',	// The base string used for the player id.  Will end up with an integer appended to it e.g. 'ytplayer0', 'ytplayer1' etc
-			url: 'http://www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
+			url: window.location.protocol + '//www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
 			media: '8LiQ-bLJaM4',
 			repeat: false,	// loop the flash video true/false
-            captions: null, // caption XML URL link for caption content 
-            captionsOn : true, // Setting for turning the captions on/off by default
-            flashWidth: '100%',
+                        captions: null, // caption XML URL link for caption content 
+                        captionsOn : true, // Setting for turning the captions on/off by default
+                        flashWidth: '100%',
 			flashHeight: '300px',
 			playerStyles : {
 					'height' : '100%',
@@ -142,9 +141,9 @@ var html5_methods = {
 			flashContainer: 'span',
 			playerContainer: 'span', // the container of the flash and controls
 			image: '', //thumbnail image URL that appears before the media is played - This needs to be worked into the player
-            playerSkip: 10, // amount in seconds the rewind and forward buttons skip
-            volumeStep: 10,	// Amount by which to increase or decrease the volume at any given time
-            buttons : {
+                        playerSkip: 10, // amount in seconds the rewind and forward buttons skip
+                        volumeStep: 10,	// Amount by which to increase or decrease the volume at any given time
+                        buttons : {
 				forward: true,	// Whether or not to show the fast-forward button
 				rewind: true,	// Whether or not to show the rewind button
 				toggle: true	// If this is set to false, both play and pause buttons will  be provided
@@ -160,15 +159,41 @@ var html5_methods = {
 		* Method for detecting whether or not HTML5 video is supported
 		* @param mimetype {string}: The mimetype for the video in use 
 		* as expected in the 'type' attribute of the video element
-		* @return {boolean}: True if the browser supports HTML5 video/audio
-		* and the mimetype parameter is likely to play in this browser
+		* @return {object|false}: an object containing details of supported media if the browser supports HTML5 video/audio if any
+		* and any provided mimetypes are likely to play in this browser
 		*---------------------------------------------------------*/
-		var supports_media = function(mimetype, container) {
-			var elem = document.createElement(container);
-			if(elem.canPlayType != undefined){
-				var playable = elem.canPlayType(mimetype);
-				if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
-					return true;
+		var supported_media = function(player) {
+			var media = player.config.media,
+					elem,
+					mediatype,
+					playable,
+					isPlayable,
+					a,b;
+
+			isPlayable = function(media) {
+				elem = document.createElement(media.container);
+				if(elem.canPlayType != undefined){
+					playable = elem.canPlayType(media.mimetype);
+					if((playable.toLowerCase() == 'maybe')||(playable.toLowerCase() == 'probably')){
+						return true;
+					}
+				}
+			};
+
+			if (typeof media === 'string') {
+				mediatype = get_media_type(media);
+				if (isPlayable(mediatype)) {
+					mediatype.src = media;
+					return mediatype;
+				}
+			}
+			if ((media instanceof Array) && (typeof media.push !== 'undefined')) {
+				for (a = 0, b = media.length; a < b; a++) {
+					mediatype = get_media_type(media[a]);
+					if (isPlayable(mediatype)) {
+						mediatype.src = media[a];
+						return mediatype;
+					}
 				}
 			}
 			return false;
@@ -209,11 +234,10 @@ var html5_methods = {
 		};
 		/*
 		* Function for extracting the media file extension such as mp3, mp4, ogg etc
-		* @param player {object}: A media player instance
+		* @param media {string}: the media file
 		* @return {object}: Mime-type for the file and codecs or null if no file type found, also returns the type of media container
 		*---------------------------------------------------------*/
-		var get_media_type = function(player){
-			var media = player.config.media;
+		var get_media_type = function(media){
 			var strt = media.lastIndexOf('.');
 			if(strt != -1 ){
 				var ext = media.substring(strt+1);
@@ -239,25 +263,6 @@ var html5_methods = {
 		// Let's just store all of our methods for the media player in an object.
 		// These will be merged with the media player instance down the line
 		var methods = {
-			/*
-			* Method for creating our reference to the player object and queueing a video
-			* ready for playback.  This method is called by specific players callback function
-			* via the player daemon
-			* @param player {object}: The player manager through which we will execute our commands such as play, pause etc
-			* @note: If the player does not need to cue the video, just override the cue method returning false or null 
-			*-----------------------------------------------------------------------------------------------------------*/
-			init : function(player){
-				// Add the reference to the player manager to our media player instance
-				this.player = player;
-				// Cue the video
-				this.cue();
-				/* 
-				* Add our player specific event listeners
-				* This one listens for the onStateChange event and calls the 
-				* playerState function at the bottom of this document
-				*---------------------------------------------------------*/
-				this.player.addEventListener("onStateChange", '(function(state) { return playerState(state, "' + this.config.id + '"); })');
-			},
 			/*
 			* Method for creating a container that
 			* holds the flash and the controls
@@ -873,9 +878,10 @@ var html5_methods = {
 			// Player manager into the player object (in the main player function loop)
 			this.is_html5 = false;
 			// Get the media type (mime type and codecs)
-			var media = get_media_type(this);
+			var media = supported_media(this);
 			// Check to see if the media type is supported by the browser
-			if(media && supports_media(media.mimetype, media.container)  && this.config.useHtml5){	// HTML 5 video element is supported
+			if(media && this.config.useHtml5){	// HTML 5 video element is supported
+				this.config.media = media.src;
 				// Flag the object as using HTML5
 				this.is_html5 = true;
 				// Assemble the HTML5 controls
@@ -883,6 +889,9 @@ var html5_methods = {
 				// Merge in our HTML5 controller methods
 				$.extend(this, html5_methods);
 			}else{	// Fallback to use flash
+				if ((this.config.media instanceof Array) && (typeof this.config.media.push !== 'undefined')) {
+					this.config.media = this.config.media[0];
+				}
 				this.$html = this.assembleHTML();
 			}
 			// If we have a captions file, add it to the mp object
@@ -890,81 +899,44 @@ var html5_methods = {
 				this.getCaptions();
 			}
 		}
-		
+
 		/* MAIN FUNCTION LOOP */
 		return this.each(function(i) {
-			
-			var $self = $(this);
-			// Create a new media player object
-			var player = new mediaplayer(i);
+			var $self = $(this),
+					youTubePlayer,
+					player,
+					setUp = function (player) {
+						// If the player is wider than 580 add a class of player-wide to the container
+						if(player.$html.width()>580) {
+							player.$html.addClass('player-wide');
+						}
+						// If the player is using HTML5 to play the media
+						// Get a refernce to the video element and merge in the
+						// Player manager
+						if(player.is_html5){
+							player.player = document.getElementById(player.config.id);
+						}
+					};
 
-			// Replace the HTML with that generated by this plugin 
-			$self.html(player.$html);
-			
-			// If the player is wider than 580 add a class of player-wide to the container
-			if(player.$html.width()>580) {
-				player.$html.addClass('player-wide');
+			if (config.url.match(/^(http|https)\:\/\/www\.youtube\.com/)) {
+				youTubePlayer = new window.NOMENSA.player.YoutubePlayer(config);
+				player = new window.NOMENSA.player.MediaplayerDecorator(youTubePlayer);
+				player.onPlayerReady(function () {
+					setUp(player);
+					this.getPlayer().setLoop(true);
+				});
+				player.init($self);
+			} else {
+				// Create a new media player object
+				player = new mediaplayer(i);
+				// Replace the HTML with that generated by this plugin
+				$self.html(player.$html);
+				setUp(player);
+
+				// Add the player to the window.NOMENSA.player.PlayerDaemon
+				window.NOMENSA.player.PlayerDaemon.addPlayer(player);
 			}
-			// If the player is using HTML5 to play the media
-			// Get a refernce to the video element and merge in the 
-			// Player manager
-			if(player.is_html5){
-				player.player = document.getElementById(player.config.id);
-			}
-			
-			// Add the player to the PlayerDaemon
-			PlayerDaemon.addPlayer(player);
 		});
 		/* END MAIN FUNCTION LOOP */
-	
 	};
-
 }(jQuery));
-
-
-/*
-* Global function called by YouTube when player is ready
-* We use this to get a reference to the player manager.  We can retrieve 
-* The player instance from the PlayerDaemon using the playerId
-* 
-* @param playerId {string}: The id of the player object.  This is used to
-* retrieve the correct player instance from the PlayerDaemon  
-*---------------------------------------------------------------------------*/
-function onYouTubePlayerReady(playerId) {
-	var player = PlayerDaemon.getPlayer(playerId);	// This is our initial object created by the mediaplayer plugin
-	var myplayer = document.getElementById(player.config.id);	// This is a reference to the DOM element that we use as an interface through which to execute player commands
-	player.init(myplayer);	// Pass the controller to our generated player object
-}
-
-/*
-* Global function that is called on Youtube player state change
-* This is registered in the init call for the media player object (when we have a player 
-* manager instance to inject into the player object).  We use this to listen for any 
-* play commands that have not been initialised using the media player control panel
-* (e.g. if the play button within the actual flash element is activated).
-* 
-* @param state {int}: The state code for the player when this function is fired
-*   This code is set by the youtube api.  Can be one of:
-*     -> -1: Unstarted
-*     -> 0 : Ended
-*     -> 1 : Playing
-*     -> 2 : Paused
-*     -> 3 : Buffering
-*     -> 5 : Video Cued
-* 
-* @param playerId {string}: The id of the player.  We use this to access the 
-* correct player instance from the PlayerDaemon
-* 
-*---------------------------------------------------------------------------*/ 
-function playerState(state, playerId){
-	var player = PlayerDaemon.getPlayer(playerId);
-	if(state == 1){
-		player.play();
-		if(player.config.buttons.toggle){	// This seems pretty bad.  Can we not abstract this sort of logic further?
-			player.$html.find('.play').removeClass('play').addClass('pause').text('Pause');
-		}
-	}else if(player.config.repeat && (state == 0)){	// The movie has ended and the config requires the video to repeat
-		// Let's just start the movie again 
-		player.play();
-	}
-}

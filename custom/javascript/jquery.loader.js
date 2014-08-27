@@ -1,10 +1,10 @@
 /**
-*    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.  
-*    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar 
+*    The Nomensa accessible media player is a flexible multimedia solution for websites and intranets.
+*    The core player consists of JavaScript wrapper responsible for generating an accessible HTML toolbar
 *    for interacting with a media player of your choice. We currently provide support for YouTube (default),
 *    Vimeo and JWPlayer although it should be possible to integrate the player with almost any media player on
 *    the web (provided a JavaScript api for the player in question is available).
-*    
+*
 *    Copyright (C) 2012  Nomensa Ltd
 *
 *    This program is free software: you can redistribute it and/or modify
@@ -24,19 +24,20 @@
 
 jQuery(function($) {
 /*
- * There are many ways in which you can load the Accessible Media Player. The best method 
+ * There are many ways in which you can load the Accessible Media Player. The best method
  * will vary depending on any implementation and/or CMS restrictions you might have.
  */
-    
-	/*
-	 * OR you could do a jQuery lookup for specific links/file types
-	 * (simple but potentially less flexible and extra load on the browser)
-	 */
-	var $yt_links = $("a[href*='http://www.youtube.com/watch'],a[href*='https://www.youtube.com/watch']");
-    var $vimeo_links = $("a[href*='http://vimeo.com/'],a[href*='https://vimeo.com/']");
-    var $media_links = $("a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
-    var $audio_links = $("a[href$='mp3']");
-    
+
+    /*
+     * OR you could do a jQuery lookup for specific links/file types
+     * (simple but potentially less flexible and extra load on the browser)
+    */
+    var protocol = window.location.protocol;
+    var $yt_links = $(".media-player-wrapper a[href*='" + protocol + "//www.youtube.com/watch']");
+    var $vimeo_links = $(".media-player-wrapper a[href*='" + protocol + "//vimeo.com/']");
+    var $media_links = $(".media-player-wrapper a[href$='flv'], a[href$='mp4'], a[href$='ogv']");
+    var $audio_links = $(".media-player-wrapper a[href$='mp3']");
+
     // Create players for our youtube links
     $.each($yt_links, function(i) {
         var $holder = $('<span />');
@@ -52,11 +53,12 @@ jQuery(function($) {
         $holder.player({
             id:'yt'+i,
             media:link,
-			captions:captionsf
+            captions:captionsf,
+            flashHeight: 350
         });
     });
 
-	// Iterate through the links to vimeo 
+	// Iterate through the links to vimeo
 	// instantiating a player instance for each
 	$.each($vimeo_links, function(i) {
     	var $holder = $('<span />');
@@ -73,7 +75,7 @@ jQuery(function($) {
             id:'vimeo'+i,
             url: 'http://vimeo.com/moogaloop.swf?clip_id=',
             media:link,
-			captions:captionsf
+            captions:captionsf
         }, vimeoconfig);
     });
 
@@ -83,12 +85,12 @@ jQuery(function($) {
         $(this).parent().replaceWith($holder);
         // Get the path/url tpo the audio file
         var link = $(this).attr('href');
-        // Create an instance of the player 
+        // Create an instance of the player
         $holder.player({
             id:'audio'+i,
             media:link,
-        	flashHeight: 50,
-        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+            flashHeight: 50,
+            url: '../custom/javascript/config/jwplayer-5/core/player.swf',
             playerWidth: '270px',
             swfCallback : jwPlayerReady
         }, jwconfig);
@@ -100,19 +102,18 @@ jQuery(function($) {
         // Extract the url/path from the links href attribute
         var link = $(this).attr('href');
         // Grab the captions if they exist
-		var $captions = $(this).siblings('.captions');
-		// Work out if the video has captions
-		var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
-		$(this).parent().replaceWith($holder);
-		// Instantiate the jwplayer
+        var $captions = $(this).siblings('.captions');
+        // Work out if the video has captions
+        var captionsFile = $($captions).length > 0 ? $($captions).attr('href') : '';
+        $(this).parent().replaceWith($holder);
+        // Instantiate the jwplayer
         $holder.player({
             id:'jw'+i,
             media:link,
-			captions:captionsFile,
-        	flashHeight: 300,
-        	url: '../custom/javascript/config/jwplayer-5/core/player.swf',
-        	swfCallback : jwPlayerReady
+            captions:captionsFile,
+            flashHeight: 300,
+            url: '../custom/javascript/config/jwplayer-5/core/player.swf',
+            swfCallback : jwPlayerReady
         }, jwconfig);
     });
-
 });
