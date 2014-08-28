@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		
+
 	    <meta charset="utf-8" />
-	    
+
 	    <title>Accessible Media Player Example - Vimeo</title>
-	
+
 		<!-- Include styles for media player -->
 	    <link type="text/css" href="../core/css/player-core.css" rel="stylesheet" >
 	    <link type="text/css" href="../custom/css/player-theme.css" rel="stylesheet" >
-	
+
 		<!-- Include googles JSAPI and load jQuery from there -->
 	    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
 	        google.load("jquery", "1.6.0");
 	        google.load("jqueryui", "1.8.13");
 	    </script>
-	    
+
 	    <!-- Include swfobject for embedding flash in the page -->
 	    <script type="text/javascript" src="../core/javascript/swfobject/swfobject.js"></script>
 	    <!-- Include the config file for the vimeo media player -->
@@ -30,7 +30,8 @@
 	    $(document).ready(function(){
 	    	// Find all of the links to videos on the vimeo site
 	    	var $vimeo_links = $("a[href*='http://vimeo.com/']");
-    		// Iterate through the links to vimeo 
+
+    		// Iterate through the links to vimeo
 	    	// instantiating a player instance for each
 	    	$.each($vimeo_links, function(i) {
 		    	var $holder = $('<span />');
@@ -41,15 +42,15 @@
 		        var captionsf = $($mycaptions).length > 0 ? $($mycaptions).attr('href') : null;
 		        // Ensure that we extract the last part of the vimeo link (the video id)
 		        // and pass it to the player() method
-		        var link = $(this).attr('href').split("/")[3];
+				var link = parseInt($(this).attr('href').split("/")[3]);
 		        // Initialise the player
 		        $holder.player({
 		            id:'vimeo'+i,
 		            url: 'http://vimeo.com/moogaloop.swf?clip_id=',
 		            media:link,
 					captions:captionsf
-		        }, vimeoconfig);
-		    });
+				}, vimeoconfig);
+			});
 		});
 	    </script>
 	</head>
@@ -61,7 +62,7 @@
 	        <p>
 	        	<a href="http://vimeo.com/33729937">Screen readers are strange, when you're a stranger by Leonie Watson</a>
 	        </p>
-	    	
+
 	    </div>
 	</body>
 </html>
