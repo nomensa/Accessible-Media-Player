@@ -9,7 +9,7 @@ jQuery(function($) {
 				$(this).addClass('player-wide');
 			} else {
 				$(this).removeClass('player-wide');
-			}    
+			}
 	    });
 	});
 });
@@ -20,18 +20,18 @@ jQuery(function($) {
 * The Youtube AS3 API only allows the callback to be named,
 * not sent in, so we add a function to this object linked to
 * to each player's id
-*/ 
+*/
 if (typeof window.postMessage === "undefined") {
   window.NOMENSA.player.stateHandlers = {};
 }
 /*
 * Global object used for managing all the players on our page
-* Use the getPlayer, addPlayer and removePlayer methods for 
+* Use the getPlayer, addPlayer and removePlayer methods for
 * modifying the players within the window.NOMENSA.player.PlayerManager
 *---------------------------------------------------------*/
 window.NOMENSA.player.PlayerManager = function(){
 	//This is where we will store all of our player instances
-	var players = {};	
+	var players = {};
 	/*
 	* Use this method for retrieving a player from the player list
 	* @param playerID {string}: The id of the player object that we want to retrieve
@@ -74,21 +74,21 @@ window.NOMENSA.player.PlayerManager = function(){
 };
 
 /*
-* Create a new instance of our window.NOMENSA.player.PlayerManager object 
+* Create a new instance of our window.NOMENSA.player.PlayerManager object
 * See object above for info on how this works
 *----------------------------------------------------*/
 window.NOMENSA.player.PlayerDaemon = new window.NOMENSA.player.PlayerManager();
 
 /*
-* Methods for and HTML5 video player.  These should be browser and implementation inspecific. 
+* Methods for and HTML5 video player.  These should be browser and implementation inspecific.
 * As such there should not be any need to change these controls on a per client basis
-* 
-* @note: all of the player controls should be included here.  The methods in this plugin 
+*
+* @note: all of the player controls should be included here.  The methods in this plugin
 * may be overridden by another config before we get to merging in HTML5 controls
 * As such, any player interface control included in the plugin methods should also be included here
 *
 * @note: We will always assume that a players volume will be between 1 and 100.  The HTML5 spec uses
-* decimal values between 0 and 1.  Therefore we get and set the volume ensuring that we multiply by or 
+* decimal values between 0 and 1.  Therefore we get and set the volume ensuring that we multiply by or
 * divide by 100 to get a percentage value
 *-----------------------------------------------------------------------------------------------------*/
 var html5_methods = {
@@ -102,7 +102,7 @@ var html5_methods = {
 		getDuration : function(){return this.player.duration;},
 		getCurrentTime : function(){return this.player.currentTime;},
 		getBytesLoaded : function(){return this.player.buffered.end(0);},
-		getBytesTotal : function(){ 
+		getBytesTotal : function(){
 				return this.player.duration;
 		},
 		seek : function(time){this.player.currentTime = time;},
@@ -110,7 +110,7 @@ var html5_methods = {
 };
 
 /*
-* Main plugin function used to create media player HTML and 
+* Main plugin function used to create media player HTML and
 * delegate controls to the correct player instance.
 * @param options {object}: An object of config options for specific instance of the plugin
 * @param functions {object}: A map of functions/methods that will be merged into the player
@@ -119,17 +119,17 @@ var html5_methods = {
 * @return {object}: The jQuery wrapped set on which the player method was initially called (allows for chaining).
 *----------------------------------------------------*/
 (function($) {
-	
+
 	// Add the player() method to the jQuery prototype chain
 	$.fn.player = function(options, functions) {
-		
+
 		// Define the default config settings for the plugin
 		var defaults = {
 			id: 'media_player',	// The base string used for the player id.  Will end up with an integer appended to it e.g. 'ytplayer0', 'ytplayer1' etc
 			url: window.location.protocol + '//www.youtube.com/apiplayer?enablejsapi=1&version=3&playerapiid=',
 			media: '8LiQ-bLJaM4',
 			repeat: false,	// loop the flash video true/false
-                        captions: null, // caption XML URL link for caption content 
+                        captions: null, // caption XML URL link for caption content
                         captionsOn : true, // Setting for turning the captions on/off by default
                         flashWidth: '100%',
 			flashHeight: '300px',
@@ -148,16 +148,16 @@ var html5_methods = {
 				rewind: true,	// Whether or not to show the rewind button
 				toggle: true	// If this is set to false, both play and pause buttons will  be provided
 			},
-			logoURL : 'http://www.nomensa.com?ref=logo',	// A url or path to the logo to use within the player.  
+			logoURL : 'http://www.nomensa.com?ref=logo',	// A url or path to the logo to use within the player.
 			useHtml5 : true,	// Whether or not the player will make use of HTML5 video (if it is supported)
-			swfCallback : null	// If we are using a swf, optionally provide a callback function, currently used with 
+			swfCallback : null	// If we are using a swf, optionally provide a callback function, currently used with
 		};
 		// Merge defaults and options with deep-merge set to true
 		var config = $.extend(true, {}, defaults, options);
 
 		/*
 		* Method for detecting whether or not HTML5 video is supported
-		* @param mimetype {string}: The mimetype for the video in use 
+		* @param mimetype {string}: The mimetype for the video in use
 		* as expected in the 'type' attribute of the video element
 		* @return {object|false}: an object containing details of supported media if the browser supports HTML5 video/audio if any
 		* and any provided mimetypes are likely to play in this browser
@@ -180,6 +180,7 @@ var html5_methods = {
 				}
 			};
 
+			// Only used for JW Player
 			if (typeof media === 'string') {
 				mediatype = get_media_type(media);
 				if (isPlayable(mediatype)) {
@@ -259,7 +260,7 @@ var html5_methods = {
 			}
 			return false;
 		};
-		
+
 		// Let's just store all of our methods for the media player in an object.
 		// These will be merged with the media player instance down the line
 		var methods = {
@@ -309,7 +310,7 @@ var html5_methods = {
 				return [this.config.url, this.config.id].join('');
 			},
 			/*
-			* Method for generating the flash component 
+			* Method for generating the flash component
 			* for the media player
 			* @return {obj}: A jQuery wrapped set
 			*---------------------------------------------------------*/
@@ -320,13 +321,13 @@ var html5_methods = {
 				/* Create some parameters for the flash */
 				var params = this.getFlashParams();
 				/* Create some attributes for the flash */
-				var atts = { 
-						id: this.config.id, 
+				var atts = {
+						id: this.config.id,
 						name: this.config.id
 					};
-				
-				/* Create our flash container with default content telling 
-				* the user to download flash if it is not installed 
+
+				/* Create our flash container with default content telling
+				* the user to download flash if it is not installed
 				*/
 				var $container = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id).addClass('flashReplace').html('This content requires Macromedia Flash Player. You can <a href="http://get.adobe.com/flashplayer/">install or upgrade the Adobe Flash Player here</a>.');
 				/* Create our video container */
@@ -343,8 +344,8 @@ var html5_methods = {
 				 ********************************************************************************************************/
 				// This is where we embed our swf using swfobject
 				setTimeout(function() {
-					swfobject.embedSWF(url, 
-							$container.attr('id'), $self.config.flashWidth, 
+					swfobject.embedSWF(url,
+							$container.attr('id'), $self.config.flashWidth,
 							$self.config.flashHeight, "9.0.115", null, flashvars, params, atts, $self.config.swfCallback);
 					// Dirty hack to remove element from tab index for versions of firefox that trap focus in flash
 					if(isFirefox()){
@@ -356,7 +357,7 @@ var html5_methods = {
 				return $playerContainer;
 			},
 			/*
-			* Method for generating the HTML5 video  
+			* Method for generating the HTML5 video
 			* component for the media player
 			* @return {obj}: A jQuery wrapped set
 			*---------------------------------------------------------*/
@@ -373,13 +374,13 @@ var html5_methods = {
 			/*
 			* Method for adding a button to a container
 			* @param name {string}: the name of the button
-			* @param action {string}: the action that the button will 
+			* @param action {string}: the action that the button will
 			* trigger such as 'play', 'pause', 'ffwd' and 'rwd'.
 			*---------------------------------------------------------*/
 			createButton : function(action, name) {
 				var $label = 0;
 				var btnId = [action, this.config.id].join('-');
-				
+
 				var $btn = $('<button />')
 							.append(name)
 							.addClass(action)
@@ -389,24 +390,24 @@ var html5_methods = {
 									$(this).addClass("ui-state-hover");
 								},
 								function() {
-									$(this).removeClass("ui-state-hover"); 
+									$(this).removeClass("ui-state-hover");
 								})
 							.focus(function() {
 									$(this).addClass("ui-state-focus");
 								})
 							.blur(function() {
-									$(this).removeClass("ui-state-focus"); 
+									$(this).removeClass("ui-state-focus");
 								})
 							.click(function(e){
 									e.preventDefault();
 								});
-				
+
 				return $btn;
 			},
 			/*
 			* Method for creating the functional controls such as
 			* play, pause, rwd and ffwd buttons
-			* @return {obj}: A jQuery wrapped set representing our 
+			* @return {obj}: A jQuery wrapped set representing our
 			* controls and container
 			*---------------------------------------------------------*/
 			getFuncControls : function(){
@@ -414,7 +415,7 @@ var html5_methods = {
 				var $cont = $('<div>');
 				$cont[0].className = 'player-controls';
 				var buttons = [];
-				
+
 				// Create play/pause buttons.  If toggle is enabled one button performs both
 				// play and pause functions.  Otherwise one button is provided for each
 				if(self.config.buttons.toggle){	// If the toggle button is enabled
@@ -445,7 +446,7 @@ var html5_methods = {
 					var $ffwd = self.createButton('forward', 'Forward').click(function(){self.ffwd();});
 					buttons.push($ffwd);
 				}
-				
+
 				// If captions is enabled and we have a captions file
 				if(self.config.captions){
 					var $capt = self.createButton('captions', 'Captions').click(function(){self.toggleCaptions();});
@@ -464,7 +465,7 @@ var html5_methods = {
 			/*
 			* Method for creating the volume controls such as
 			* mute/unmute, Vol Up and Vol Down buttons
-			* @return {obj}: A jQuery wrapped set representing our 
+			* @return {obj}: A jQuery wrapped set representing our
 			* volume controls and container
 			*---------------------------------------------------------*/
 			getVolControls : function(){
@@ -474,7 +475,7 @@ var html5_methods = {
 				var $up = self.createButton('vol-up', '+<span class="ui-helper-hidden-accessible"> Volume Up</span>').click(function(){self.volup();});
 				var $dwn = self.createButton('vol-down','-<span class="ui-helper-hidden-accessible"> Volume Down</span>').click(function(){self.voldwn();});
 				var $vol = $('<span />').attr({'id':'vol-'+self.config.id, 'class':'vol-display'}).text('100%');
-				// Append all of our controls.  Doing it like this since 
+				// Append all of our controls.  Doing it like this since
 				// ie6 dies if we append recursively using native jQuery
 				// append method
 				var controls = [$mute, $dwn, $up, $vol];
@@ -486,7 +487,7 @@ var html5_methods = {
 			},
 			/*
 			* Method for getting the sliderbar for the media player
-			* @return {obj}: A jQuery wrapped set, the sliderbar for 
+			* @return {obj}: A jQuery wrapped set, the sliderbar for
 			* the media player
 			*---------------------------------------------------------*/
 			getSliderBar : function(){
@@ -495,7 +496,7 @@ var html5_methods = {
 				var $slider = this.getSlider();
 				var $dur_time = $('<span />').addClass('duration-time').attr({'id':'duration-'+this.config.id}).text('00:00:00');
 				var $bar = $('<div />').addClass('timer-bar').append($info);
-				// Append all of our controls.  Doing it like this since 
+				// Append all of our controls.  Doing it like this since
 				// ie6 dies if we append recursively using native jQuery
 				// append method
 				var bits = [$curr_time, $slider, $dur_time];
@@ -507,7 +508,7 @@ var html5_methods = {
 			},
 			/*
 			* Method for creating the sliderbar for the media player
-			* @return {obj}: A jQuery wrapped set, the sliderbar for 
+			* @return {obj}: A jQuery wrapped set, the sliderbar for
 			* the media player
 			*---------------------------------------------------------*/
 			getSlider : function(){
@@ -542,23 +543,23 @@ var html5_methods = {
 				return $sliderBar.append($progressBar, $loadedBar);
 			},
 			/*
-			* Method for setting the timeout function for updating the 
+			* Method for setting the timeout function for updating the
 			* position of the slider
-			* @modifies {obj} this: Adds a reference to the timeout so that 
+			* @modifies {obj} this: Adds a reference to the timeout so that
 			* it can be cleared easily further down the line
 			*---------------------------------------------------------*/
 			setSliderTimeout : function(){
 				var self = this;
-				if(self.sliderInterval == undefined){	
-					self.sliderInterval = setInterval(function() { 
+				if(self.sliderInterval == undefined){
+					self.sliderInterval = setInterval(function() {
 						self.updateSlider();
 					}, self.config.sliderTimeout);
-				}			
+				}
 			},
 			/*
-			* Method for clearing the timeout function for updating the 
+			* Method for clearing the timeout function for updating the
 			* position of the slider
-			* @modifies {obj} this: Clears down the reference to the 
+			* @modifies {obj} this: Clears down the reference to the
 			* timeout function
 			*---------------------------------------------------------*/
 			clearSliderTimeout : function(){
@@ -571,21 +572,21 @@ var html5_methods = {
 			* Method for updating the position of the slider
 			*---------------------------------------------------------*/
 			updateSlider : function(){
-				
+
 				var duration = (typeof(this.duration) != 'undefined') ? this.duration : this.getDuration();
 				var duration_found = (typeof(this.duration_found) == 'boolean') ? this.duration_found : false;
 				var current_time = this.getCurrentTime();
 				var markerPosition = 0;
-				
+
 				//get the correct value to set the marker to, converting time played to %
 				if(duration > 0) {
 					markerPosition = (current_time/duration)*100;
 					markerPosition = parseInt(markerPosition,10);
-				}else{	// Some players will return -1 for duration when the player is stopped.  
+				}else{	// Some players will return -1 for duration when the player is stopped.
 						// This is not great so set duration to 0
 					duration = 0;
 				}
-				
+
 				// If the duration has not been found yet
 				if (!duration_found){
 					$('#duration-'+this.config.id).html(this.formatTime(parseInt(duration, 10)));
@@ -596,19 +597,19 @@ var html5_methods = {
 					.find('a.ui-slider-handle')
 					.attr({'aria-valuenow':markerPosition,'aria-valuetext':markerPosition.toString()+' percent'})
 					.css('left', markerPosition.toString()+'%');
-				
+
 				//Get a reference to the progress bar and update accordingly
 				$('#progress-bar-'+this.config.id)
 					.attr({'aria-valuenow':markerPosition, 'aria-valuetext':markerPosition.toString()+' percent'})
 					.css('width', markerPosition.toString()+'%');
-				
+
 				// Update the loader bar
 				this.updateLoaderBar();
 				// Update the current time as shown to either side of the slider bar
 				this.updateTime(current_time);
 			},
-			/* 
-			* Method for updating the loader bar 
+			/*
+			* Method for updating the loader bar
 			* This has it's own method since loading occurs in the background
 			* and may need to update whilst the video is not playing
 			*---------------------------------------------------------*/
@@ -617,7 +618,7 @@ var html5_methods = {
 				var loaded = (this.getBytesLoaded()/this.getBytesTotal())*100;
 				// Ensure that we have an integer
 				loaded = parseInt(loaded, 10);
-				// If the value of 'loaded' is not finite it is not a number 
+				// If the value of 'loaded' is not finite it is not a number
 				// so set the value of 'loaded' to 0
 				if(!isFinite(loaded)) { loaded = 0; }
 				//Get a reference to our loader bar and update accordingly
@@ -633,8 +634,8 @@ var html5_methods = {
 			formatTime : function(time){
 				var hours = 0;
 				var minutes = 0;
-				var seconds = 0; 
-				
+				var seconds = 0;
+
 				if(time >= 60) {	// If we have more than 60 seconds
 				    minutes = parseInt(time/60, 10);
 				    seconds = time-(minutes*60);
@@ -645,7 +646,7 @@ var html5_methods = {
 				} else {	// The time is less than 60 seconds in length
 				    seconds = time;
 				}
-				
+
 				var tmp = [hours, minutes, seconds];
 				var i;
 				// Convert hours, minutes and seconds to strings
@@ -658,10 +659,10 @@ var html5_methods = {
 			* Method for updating the content of the current time label
 			* @param time {int} the amount of time elapsed in seconds
 			*---------------------------------------------------------*/
-			updateTime : function(time) { 
+			updateTime : function(time) {
 				  var t = this.formatTime(parseInt(time, 10));
 				  this.$html.find('#current-'+this.config.id).html(t);
-			}, 
+			},
 			/*
 			* Method for getting the control bar for the media player
 			* @return {obj}: A jQuery wrapped set, the control bar for the media player
@@ -674,7 +675,7 @@ var html5_methods = {
 				var $func = this.getFuncControls();
 				var $vol = this.getVolControls();
 				var $slider = this.getSliderBar();
-				// Append all of our controls.  Doing it like this since 
+				// Append all of our controls.  Doing it like this since
 				// ie6 dies if we append recursively using native jQuery
 				// append method
 				var bits = [$func, $vol, $slider];
@@ -697,7 +698,7 @@ var html5_methods = {
 			},
 			/*
 			* Method for assembling our HTML5 player
-			* Only used if HTML5 video is supported by the browser 
+			* Only used if HTML5 video is supported by the browser
 			* and enabled in the player config
 			*---------------------------------------------------------*/
 			assembleHTML5 : function(container_type, mime_type){
@@ -707,7 +708,7 @@ var html5_methods = {
 				return $container;
 			},
 			/*
-			* Method for updating the visible volume labels 
+			* Method for updating the visible volume labels
 			* and any aria attributes if required
 			* @param volume {int}: The new volume of the player
 			*---------------------------------------------------------*/
@@ -724,7 +725,7 @@ var html5_methods = {
 			},
 			/*
 			* CAPTIONING
-			* All logic for captioning here.  This is a bit of a hack 
+			* All logic for captioning here.  This is a bit of a hack
 			* until such a time as captioning is better supported amongst
 			* the main media players
 			* @modifies {obj}: Adds a jQuery wrapped set of caption nodes to
@@ -734,7 +735,7 @@ var html5_methods = {
 				var self = this;
 				if (self.config.captions){
 					var $captions = [];
-					$.ajax({ 
+					$.ajax({
 						url : self.config.captions,
 						success : function(data){
 							if($(data).find('p').length > 0){
@@ -760,7 +761,7 @@ var html5_methods = {
 				}
 			},
 			/*
-			* Method for inserting the caption into the media player dom 
+			* Method for inserting the caption into the media player dom
 			* @param caption {obj}: A jQuery wrapped node from the captions file
 			*---------------------------------------------------------*/
 			insertCaption : function(caption){
@@ -775,7 +776,7 @@ var html5_methods = {
 				}
 			},
 			/*
-			* Method for obtaining the previous caption from the captions 
+			* Method for obtaining the previous caption from the captions
 			* file.  This is used when captions are turned off
 			* @param time {float}: The time representing the current time of the player
 			* If this is null or undefined we will get the current time from the player instance
@@ -819,7 +820,7 @@ var html5_methods = {
 				this.clearCaptionTimeout();
 				this.destroyPlayerInstance();
 				this.$html.remove();
-			},			
+			},
 			/*
 			* Set the timeout for updating captions.  Set to half a second since
 			* we get some annoying floating point issues.  This is related to
@@ -828,7 +829,7 @@ var html5_methods = {
 			setCaptionTimeout : function(){
 				var self = this;
 				if (self.captionInterval == undefined){ // We don't wanna set more than 1 timeout.  If we do, we cannot turn it off
-					self.captionInterval = setInterval(function() { 
+					self.captionInterval = setInterval(function() {
 						self.syncCaptions();
 					}, 500);
 				}
@@ -874,7 +875,7 @@ var html5_methods = {
 			// Add our methods to the mediaplayer instance
 			$.extend(true, this, methods, functions);
 			// By default we will set is_html5 to false
-			// This is a simple switch for merging the correct 
+			// This is a simple switch for merging the correct
 			// Player manager into the player object (in the main player function loop)
 			this.is_html5 = false;
 			// Get the media type (mime type and codecs)
