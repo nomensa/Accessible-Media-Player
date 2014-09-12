@@ -133,14 +133,14 @@ var html5_methods = {
             captions: null, // caption XML URL link for caption content 
             captionsOn : true, // Setting for turning the captions on/off by default
             flashWidth: '100%',
-			flashHeight: '300px',
+			flashHeight: '200px',
 			playerStyles : {
 					'height' : '100%',
 					'width' : '100%'
 				},
 			sliderTimeout:350,
-			flashContainer: 'span',
-			playerContainer: 'span', // the container of the flash and controls
+			flashContainer: 'div',
+			playerContainer: 'div', // the container of the flash and controls
 			image: '', //thumbnail image URL that appears before the media is played - This needs to be worked into the player
             playerSkip: 10, // amount in seconds the rewind and forward buttons skip
             volumeStep: 10,	// Amount by which to increase or decrease the volume at any given time
@@ -149,8 +149,8 @@ var html5_methods = {
 				rewind: true,	// Whether or not to show the rewind button
 				toggle: true	// If this is set to false, both play and pause buttons will  be provided
 			},
-			logoURL : 'http://www.nomensa.com?ref=logo',	// A url or path to the logo to use within the player.  
-			useHtml5 : true,	// Whether or not the player will make use of HTML5 video (if it is supported)
+			logoURL : '',	// A url or path to the logo to use within the player.  
+			useHtml5 : false,	// Whether or not the player will make use of HTML5 video (if it is supported)
 			swfCallback : null	// If we are using a swf, optionally provide a callback function, currently used with 
 		};
 		// Merge defaults and options with deep-merge set to true
@@ -325,7 +325,14 @@ var html5_methods = {
 				*/
 				var $container = $('<'+this.config.flashContainer+' />').attr('id', 'player-' + this.config.id).addClass('flashReplace').html('This content requires Macromedia Flash Player. You can <a href="http://get.adobe.com/flashplayer/">install or upgrade the Adobe Flash Player here</a>.');
 				/* Create our video container */
-				var $videoContainer = $('<span />').addClass('video');
+				var $videoContainer = $('<div />').addClass('video');
+				//create a thumbnail to cover the flashplayer's play button. Starting the video with that button doesn't trigger captions.
+				$('<img/>', {
+					id: 'thumb'+this.config.media,
+					src: 'http://i.ytimg.com/vi/'+this.config.media+'/hqdefault.jpg',
+					alt: '',
+					style:'width:100%;height:100%;position:absolute;top:0;left:0'
+				}).appendTo($videoContainer);
 				/* Get the url for the player */
 				var url = this.getURL();
 				/********************************************************************************************************
@@ -356,7 +363,7 @@ var html5_methods = {
 			* @return {obj}: A jQuery wrapped set
 			*---------------------------------------------------------*/
 			generateHTML5Player : function($playerContainer, container_type, mime_type){
-				var $videoContainer = $('<span />');
+				var $videoContainer = $('<div />');
 				$videoContainer[0].className = 'video';
 				var $video = $('<'+container_type+' />').attr({'id':this.config.id, 'src':this.config.media, 'type':mime_type}).css({'width':'100%', 'height':'50%'});
 				// If an image/thumbnail has been provided for the video
@@ -485,7 +492,7 @@ var html5_methods = {
 			* the media player
 			*---------------------------------------------------------*/
 			getSliderBar : function(){
-				var $info = $('<span />').addClass('ui-helper-hidden-accessible').html('<p>The timeline slider below uses WAI ARIA. Please use the documentation for your screen reader to find out more.</p>');
+				var $info = $('<span />').addClass('ui-helper-hidden-accessible').html('<span>The timeline slider below uses WAI ARIA. Please use the documentation for your screen reader to find out more.</span>');
 				var $curr_time = $('<span />').addClass('current-time').attr({'id':'current-'+this.config.id}).text('00:00:00');
 				var $slider = this.getSlider();
 				var $dur_time = $('<span />').addClass('duration-time').attr({'id':'duration-'+this.config.id}).text('00:00:00');
@@ -662,8 +669,8 @@ var html5_methods = {
 			* @return {obj}: A jQuery wrapped set, the control bar for the media player
 			*---------------------------------------------------------*/
 			getControls : function(){
-				var $controls = $('<span />').addClass('ui-corner-bottom').addClass('control-bar');
-				// Insert the Nomensa Logo
+				var $controls = $('<div />').addClass('ui-corner-bottom').addClass('control-bar');
+				//Insert the Nomensa Logo
 				var $logo = $('<a />').attr('href', 'http://www.nomensa.com?ref=logo').html('Accessible Media Player by Nomensa').addClass('logo');
 				$controls.append($logo);
 				var $func = this.getFuncControls();
@@ -842,7 +849,7 @@ var html5_methods = {
 			* easily override these methods to work with different Players via
 			* a config
 			*---------------------------------------------------------*/
-			play : function(){this.player.playVideo();this.setSliderTimeout();if(this.config.captionsOn && this.captions){this.setCaptionTimeout();}},
+			play : function(){$('div.video img#thumb'+this.config.media).hide();this.player.playVideo();this.setSliderTimeout();if(this.config.captionsOn && this.captions){this.setCaptionTimeout();}}, //added bit to hide the thumbnail image so we can see the video 
 			pause : function(){this.player.pauseVideo();this.clearSliderTimeout();if(this.config.captionsOn && this.captions){this.clearCaptionTimeout();}},
 			ffwd : function(){var time = this.getCurrentTime() + this.config.playerSkip;this.seek(time);},
 			rewd : function(){var time = this.getCurrentTime() - this.config.playerSkip;if(time < 0){time = 0;}this.seek(time);},
@@ -963,8 +970,14 @@ function playerState(state, playerId){
 		if(player.config.buttons.toggle){	// This seems pretty bad.  Can we not abstract this sort of logic further?
 			player.$html.find('.play').removeClass('play').addClass('pause').text('Pause');
 		}
+	
 	}else if(player.config.repeat && (state == 0)){	// The movie has ended and the config requires the video to repeat
 		// Let's just start the movie again 
 		player.play();
+	}
+
+	else if(state==0){
+	//show the thumbnail image again to stop the flashplayer play button being used
+	$('img#thumb'+this.config.media).show();
 	}
 }
