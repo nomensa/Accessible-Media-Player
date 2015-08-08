@@ -1,0 +1,7 @@
+{
+    "name": "nomensa/accessible-media-player",
+    "type": "library",
+    "description": "An accessible media player for video and audio.",
+    "homepage": "https://github.com/nomensa/Accessible-Media-Player",
+    "license": "GPL version 3",
+}
